@@ -1,0 +1,25 @@
+MONTMORY Konfigurator V43 – GitHub Pages
+
+1. Auf GitHub ein neues Repository erstellen, z. B.:
+   montmory-konfigurator
+
+2. ALLE Dateien aus diesem Ordner direkt in das Repository hochladen.
+   Wichtig: index.html muss direkt im Hauptverzeichnis liegen.
+
+3. GitHub:
+   Settings -> Pages
+
+4. Unter "Build and deployment":
+   Source: Deploy from a branch
+   Branch: main
+   Folder: / (root)
+   Danach Save.
+
+5. Nach kurzer Zeit erscheint die öffentliche Adresse, z. B.:
+   https://DEINNAME.github.io/montmory-konfigurator/
+
+Hinweise
+- Für GitHub Pages wurden die lokalen Dateipfade auf relative Pfade vorbereitet.
+- .nojekyll ist enthalten, damit GitHub das Projekt unverändert als statische Website ausliefert.
+- GPX-Verarbeitung und 3D-Vorschau laufen vollständig im Browser.
+- Der E-Mail-Versand ist davon getrennt und benötigt weiterhin den in der jeweiligen Version eingerichteten Versanddienst.

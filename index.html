@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MONTMORY Trail Mark GPX-Konfigurator">
+  <title>MONTMORY – Dein Trail Mark</title>
+  <link rel="stylesheet" href="./style.css?v=81-78">
+</head>
+<body>
+  <header class="brand-header">
+    <div class="brand-inner">
+      <a href="./index.html" class="brand-home" aria-label="MONTMORY Startseite"><img src="./montmory-logo.png" alt="MONTMORY – From Mountains to Memories" class="company-logo"></a>
+      <div class="brand-meta"><a class="nav-design" href="#konfigurator">Trail Mark gestalten</a><span class="brand-about">FROM MOUNTAINS TO MEMORIES.</span><a class="header-contact" id="whatsappGeneral" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer" aria-label="MONTMORY per WhatsApp kontaktieren"><span aria-hidden="true">✦</span> Fragen? WhatsApp</a></div>
+    </div>
+  </header>
+
+  <section class="alpine-hero" aria-label="MONTMORY Bergwelt"><div class="alpine-hero-content"><h1>Deine Tour. Dein Unikat.</h1><p>Gestalte deine persönliche Erinnerung aus Holz.</p><a class="hero-cta" href="#konfigurator">⌁ &nbsp; Trail Mark gestalten &nbsp; →</a></div></section>
+  <main class="configurator-shell" id="konfigurator">
+    
+    <nav class="wizard-nav" aria-label="Konfigurationsschritte"><button type="button" data-wizard-go="1" class="active"><span class="wizard-number">1</span><span>GPX hochladen</span></button><button type="button" data-wizard-go="2"><span class="wizard-number">2</span><span>Gestalten</span></button><button type="button" data-wizard-go="3"><span class="wizard-number">3</span><span>Bestellen</span></button></nav>
+    <div class="config-grid">
+      <section class="controls-column">
+        <section class="card upload-card" data-wizard-step="1">
+          <div class="step">1</div>
+          <div class="card-content">
+            <h2>Deine Tour importieren</h2><p class="upload-description">Lade die GPX-Datei deiner Tour hoch. Daraus erstellen wir dein persönliches Höhenprofil.</p>
+            <label class="upload">
+              <span class="upload-icon">↥</span>
+              <span><strong>GPX-Datei auswählen</strong><small>oder hierhin ziehen · .gpx</small></span>
+              <input id="gpxFile" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml">
+            </label>
+            <details class="advanced-tools"><summary>Weitere Optionen</summary><div class="save-tools"><button type="button" id="saveConfig" class="review-cancel">Konfiguration speichern</button><label class="review-cancel file-button">Konfiguration laden<input id="loadConfig" type="file" accept=".json,application/json" hidden></label></div>
+            <div id="saveStatus" class="muted" role="status"></div></details>
+            <div id="status" class="status">Noch keine GPX-Datei geladen.</div><div class="sample-gpx"><span>Keine GPX-Datei zur Hand?</span><button type="button" id="loadExampleGpx">Beispieltour ausprobieren →</button></div>
+          </div>
+        </section>
+
+        <section class="card settings-card" data-wizard-step="2">
+          <div class="step">2</div>
+          <div class="card-content">
+            <h2>Deine Gestaltung</h2>
+
+            <label class="field">
+              <span>Titel deiner Tour</span>
+              <input id="titleInput" type="text" maxlength="32" value="Meine Tour">
+            </label>
+
+            <div class="two-fields">
+              <label class="field">
+                <span>Strecke</span>
+                <div class="number-field"><input id="distanceInput" type="number" min="0" step="0.1" value="53.3"><b>km</b></div>
+              </label>
+              <label class="field">
+                <span>Höhenmeter</span>
+                <div class="number-field"><input id="gainInput" type="number" min="0" step="1" value="2933"><b>hm</b></div>
+              </label>
+            </div>
+
+            <label class="field"><span>Persönliche Widmung (optional)</span><label class="gift-toggle"><input type="checkbox" id="giftEnabled"> Widmung auf der Rückseite hinzufügen</label></label>
+            <label class="field" id="giftMessageWrap" hidden><span>Widmung (max. 30 Zeichen)</span><input id="giftMessage" type="text" maxlength="30" placeholder="Für dich, mein Gipfelheld!"><small>Die Widmung erscheint auf der Rückseite. Ohne Widmung bleibt dieser Bereich frei.</small></label>
+            <details class="v81-advanced"><summary>Erweiterte Gestaltung</summary><fieldset class="profile-choice">
+              <legend>Grafik auf der Vorderseite</legend>
+              <label>
+                <input type="radio" name="profileMode" value="elevation" checked>
+                <span><strong>Höhenprofil</strong><small>Strecke automatisch hinten</small></span>
+              </label>
+              <label>
+                <input type="radio" name="profileMode" value="route">
+                <span><strong>Strecke</strong><small>Höhenprofil automatisch hinten</small></span>
+              </label>
+            </fieldset></details>
+          </div>
+        </section>
+
+        <section class="card tour-card" data-wizard-step="2">
+          <div class="card-content full-width">
+            <div class="tour-head"><span>TOURDATEN</span><b>LIVE</b></div>
+            <h2 id="previewTitle">Meine Tour</h2>
+            <svg class="profile" viewBox="0 0 700 240" aria-label="Tourgrafik">
+              <path id="profilePath" d=""></path>
+            </svg>
+            <div class="tour-values">
+              <div><span>Strecke</span><strong id="previewDistance">53,3 km</strong></div>
+              <div><span>Höhenmeter</span><strong id="previewGain">2933 hm</strong></div>
+              <div><span>Dauer</span><strong id="previewDuration">11:10:37 h</strong></div>
+              <div><span>Datum</span><strong id="previewDate">20.07.2024</strong></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card send-config-panel" data-wizard-step="3">
+          <div class="step">3</div>
+          <div class="card-content">
+            <h2>Deine Bestellung</h2>
+            <p class="send-intro">Fast geschafft! Gib deine Kontaktdaten ein und prüfe anschließend deine Gravur.</p>
+            <div class="customer-fields">
+              <label class="field"><span>Dein Name *</span><input id="customerName" type="text" autocomplete="name" maxlength="100" required placeholder="Vor- und Nachname"></label>
+              <label class="field"><span>Deine E-Mail-Adresse *</span><input id="customerEmail" type="email" autocomplete="email" maxlength="150" required placeholder="name@beispiel.de"></label>
+              <label class="field"><span>Nachricht (optional)</span><textarea id="customerNote" rows="2" maxlength="500" placeholder="Weitere Wünsche zur Bestellung"></textarea></label>
+            </div>
+            <p class="muted">Prüfe deine beiden Gravurseiten. Danach wird eine ZIP-Bestelldatei heruntergeladen und dein E-Mail-Programm vorbereitet.</p>
+            <button id="sendConfiguration" type="button" class="primary-button">Bestellung prüfen <span aria-hidden="true">→</span></button>
+            <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Bitte zuerst eine GPX-Datei hochladen.</div>
+            <div class="whatsapp-order"><span>Du bist dir noch unsicher?</span><a id="whatsappOrder" class="whatsapp-link" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer">Frage zu meiner Bestellung per WhatsApp ↗</a><p class="muted whatsapp-hint">WhatsApp dient nur zur Beratung – es wird keine Bestellung versendet.</p></div>
+            <a id="openEmailDraft" href="#" hidden>E-Mail-Entwurf erneut öffnen</a>
+            <div id="orderReview" class="order-review" hidden>
+              <h3>Vorder- und Rückseite prüfen</h3>
+              <p id="orderNumberDisplay" class="order-number"></p><div id="customerSummary" class="customer-summary"></div>
+              <div id="engravingCheck" class="engraving-check" role="status" aria-live="polite"></div>
+              <div class="order-preview-grid">
+                <figure><figcaption>Vorderseite</figcaption><img id="orderPreviewFront" alt="SVG-Gravur Vorderseite"></figure>
+                <figure><figcaption>Rückseite</figcaption><img id="orderPreviewBack" alt="SVG-Gravur Rückseite"></figure>
+              </div>
+              <p class="muted"><strong>Wichtig:</strong> Nach dem Bestätigen wird eine ZIP-Datei mit beiden SVG-Dateien, der GPX-Datei und den Bestelldaten heruntergeladen. Bitte füge diese ZIP-Datei manuell als Anhang hinzu und klicke in deiner E-Mail-App auf Senden. Es wird nichts automatisch verschickt.</p>
+              <button type="button" id="cancelOrderReview" class="review-cancel">Zurück zur Bearbeitung</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card svg-export-panel" data-wizard-step="3">
+          <div class="step">4</div>
+          <div class="card-content">
+            <h2>Gravur für LightBurn</h2>
+            <p class="muted">Vektor-SVG für Vorder- und Rückseite. Erst nach dem GPX-Upload verfügbar.</p>
+            <div class="physical-size-settings">
+              <label>Reale Breite (mm)<input id="markWidthMM" type="number" min="1" max="300" step="0.1" value="60"></label>
+              <label>Reale Höhe (mm)<input id="markHeightMM" type="number" min="1" max="300" step="0.1" value="80"></label>
+            </div>
+            <p class="contour-hint">Reale Werkstückmaße: 60 × 80 mm. Die Außenkontur stammt aus der GLB-Datei und wird passend skaliert.</p>
+            <label class="contour-choice"><input type="checkbox" id="includeOuterContour" checked> Außenkontur des Marks als separate Linie hinzufügen</label>
+            <p class="contour-hint">Rote Ebene in LightBurn – nur bei Bedarf als Schnittlinie aktivieren.</p>
+            <div class="svg-export-buttons">
+              <button type="button" id="downloadFrontSvg" class="primary-button" disabled>Vorderseite SVG</button>
+              <button type="button" id="downloadBackSvg" class="primary-button" disabled>Rückseite SVG</button>
+            </div>
+            <div id="svgExportStatus" class="send-status">Bitte zuerst eine GPX-Datei hochladen.</div>
+          </div>
+        </section>
+        <div class="wizard-actions"><button id="wizardBack" type="button" class="review-cancel">Zurück</button><button id="wizardNext" type="button" class="primary-button">Weiter</button><span id="wizardStatus" role="status" aria-live="polite"></span></div>
+        <div class="hidden-values" aria-hidden="true">
+          <span id="distanceValue">53,3 km</span>
+          <span id="gainValue">2933 hm</span>
+          <span id="durationValue">11:10:37 h</span>
+          <span id="dateValue">20.07.2024</span>
+        </div>
+      </section>
+
+      <section class="viewer-card">
+        <div class="viewer-header">
+          <div>
+            <span>DEINE VORSCHAU</span>
+            <h2>Dein Trail Mark</h2>
+          </div>
+          <div class="view-tabs" aria-label="Vorschau umschalten">
+            <button id="v81Mode3d" type="button" class="v81-mode active" aria-pressed="true">◈ 3D-Ansicht</button>
+            <button id="v81ModeBoth" type="button" class="v81-mode" aria-pressed="false">▣ Vorder-/Rückseite</button>
+            <div class="v81-legacy-controls" aria-hidden="true">
+              <button id="singlePreview" type="button" class="active" aria-pressed="true" tabindex="-1">Einzelansicht</button>
+              <button id="doublePreview" type="button" aria-pressed="false" tabindex="-1">Beide Seiten</button>
+              <button id="frontView" type="button" class="active" tabindex="-1">Vorne</button>
+              <button id="backView" type="button" tabindex="-1">Hinten</button>
+              <button id="sideView" type="button" class="secondary-view" tabindex="-1">Seite</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="viewer-stage">
+          <canvas id="threeViewer"></canvas>
+          <div id="samplePreview" class="sample-preview" aria-label="Beispielvorschau, bis eine GPX-Datei geladen wird">
+            <div class="sample-preview-badge">BEISPIELANSICHT · SO KÖNNTE DEIN TRAIL MARK AUSSEHEN</div>
+            <div class="sample-marks">
+              <svg class="sample-mark" viewBox="0 0 220 290" role="img" aria-label="Beispiel Vorderseite mit Höhenprofil">
+                <defs><linearGradient id="woodA" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e9b981"/><stop offset=".55" stop-color="#d6a06a"/><stop offset="1" stop-color="#bd8553"/></linearGradient></defs>
+                <path d="M110 9 L204 61 Q211 65 211 75 V267 Q211 279 199 279 H21 Q9 279 9 267 V75 Q9 65 16 61 Z" fill="url(#woodA)" stroke="#a76c3f" stroke-width="3"/>
+                <path d="M110 14 L200 64 V267 Q200 270 197 270 H23 Q20 270 20 267 V64 Z" fill="none" stroke="#f8d6a7" stroke-opacity=".45" stroke-width="2"/>
+                <circle cx="110" cy="69" r="10" fill="#9d683e"/><circle cx="110" cy="69" r="6" fill="#f6e4ca"/>
+                <text x="110" y="112" text-anchor="middle" font-family="Georgia,serif" font-size="21" fill="#39281c">Meine Bergtour</text>
+                <g stroke="#735138" stroke-opacity=".4" stroke-dasharray="3 4"><path d="M36 144 H184 M36 174 H184 M36 204 H184"/></g>
+                <path d="M35 211 L47 203 L57 209 L68 183 L79 191 L91 160 L104 167 L117 137 L131 154 L145 147 L158 188 L171 195 L185 208" stroke="#35251b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+                <text x="110" y="247" text-anchor="middle" font-size="17" font-weight="700" fill="#39281c">12,8 km · 860 hm</text>
+              </svg>
+              <svg class="sample-mark" viewBox="0 0 220 290" role="img" aria-label="Beispiel Rückseite mit MONTMORY Branding und Platz für Widmung">
+                <defs><linearGradient id="woodB" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edc08b"/><stop offset=".55" stop-color="#d8a56e"/><stop offset="1" stop-color="#c18b56"/></linearGradient></defs>
+                <path d="M110 9 L204 61 Q211 65 211 75 V267 Q211 279 199 279 H21 Q9 279 9 267 V75 Q9 65 16 61 Z" fill="url(#woodB)" stroke="#a76c3f" stroke-width="3"/>
+                <path d="M110 14 L200 64 V267 Q200 270 197 270 H23 Q20 270 20 267 V64 Z" fill="none" stroke="#f8d6a7" stroke-opacity=".45" stroke-width="2"/>
+                <circle cx="110" cy="69" r="10" fill="#9d683e"/><circle cx="110" cy="69" r="6" fill="#f6e4ca"/>
+                <path d="M53 157 L78 127 L91 139 L112 107 L136 140 L150 128 L171 157 M78 127 L88 144 L97 135 M112 107 L120 130 L128 122" stroke="#39281c" stroke-width="4" stroke-linejoin="round" fill="none"/>
+                <text x="110" y="187" text-anchor="middle" font-size="23" font-weight="700" letter-spacing="2" fill="#39281c">MONTMORY</text>
+                <text x="110" y="203" text-anchor="middle" font-size="9.5" fill="#39281c">From Mountains to Memories.</text>
+              </svg>
+            </div>
+            <p class="sample-preview-caption">Lade deine GPX-Datei hoch, um hier <strong>deine eigene Tour</strong> in 3D zu sehen.</p>
+          </div>
+          <div id="dualPreview" class="dual-3d-labels" hidden><span>Vorderseite · 3D</span><span>Rückseite · 3D</span></div>
+          <div id="viewerOverlay" class="viewer-overlay">
+            <div class="spinner"></div>
+            <strong id="viewerMessage">3D-Modell wird geladen …</strong>
+          </div>
+        </div>
+
+        <div id="viewerError" class="viewer-error hidden">
+          <strong>Die 3D-Vorschau konnte nicht gestartet werden.</strong>
+          <p id="viewerErrorText"></p>
+        </div>
+
+        <div class="v81-viewer-hint">↻ &nbsp; Mit der Maus oder dem Finger drehen</div>
+        <div class="viewer-footer"><details class="viewer-more"><summary>Ansicht einstellen</summary>
+          <div>
+            <button id="toggleRotate" type="button">Auto-Rotation</button>
+            <button id="resetCamera" type="button">Zurücksetzen</button>
+          </div>
+          <span>Ziehen zum Drehen · Scrollen zum Zoomen</span></details>
+        </div>
+        <p id="diagnosticText" class="diagnostic">MONTMORY wird initialisiert …</p>
+      </section>
+    </div>
+  </main>
+  <div class="brand-benefits" aria-label="Produktmerkmale"><span><b>↔</b> <strong>Größe</strong><small>ca. 60 × 80 mm</small></span><span><b>♧</b> <strong>Naturmaterial Holz</strong><small>Individuelle Holzmaserung</small></span><span><b>✧</b> <strong>Individuell graviert</strong><small>Mit deinem Tourprofil</small></span><span><b>♡</b> <strong>Einzigartige Erinnerung</strong><small>An deine persönliche Tour</small></span></div>
+
+  <section class="real-gallery" id="produktbilder" aria-labelledby="realGalleryTitle">
+    <div class="real-gallery-heading">
+      <div><p class="real-gallery-eyebrow">EIN BLICK AUF DAS PRODUKT</p><h2 id="realGalleryTitle">So sieht dein Trail Mark aus.</h2><p>Entdecke die Details, die Größe und beide Seiten deines Erinnerungsstücks.</p></div>
+      <span class="real-gallery-disclaimer">Bilder aus bisherigen MONTMORY-Entwürfen · echte Produktfotos folgen</span>
+    </div>
+    <div class="real-gallery-grid">
+      <figure class="real-gallery-item"><img src="./galerie-gravur.jpg" alt="Visualisierung aus bisherigen Entwürfen: Nahaufnahme der Gravur auf einem Trail Mark" loading="lazy" width="700" height="380"><figcaption><strong>Die Gravur</strong><span>Feine Linien auf natürlichem Holz.</span></figcaption></figure>
+      <figure class="real-gallery-item"><img src="./galerie-groesse.jpg" alt="Visualisierung aus bisherigen Entwürfen: Trail Mark in einer Hand vor einer Bergkulisse" loading="lazy" width="700" height="380"><figcaption><strong>Der Trail Mark</strong><span>So könnte dein Erinnerungsstück wirken.</span></figcaption></figure>
+      <figure class="real-gallery-item"><img src="./galerie-beide-seiten.jpg" alt="Visualisierung aus bisherigen Entwürfen: Vorder- und Rückseite zweier Trail Marks" loading="lazy" width="700" height="380"><figcaption><strong>Beide Seiten</strong><span>Deine Tour vorne, MONTMORY hinten.</span></figcaption></figure>
+    </div>
+  </section>
+  <footer class="site-footer">MONTMORY · From Mountains to Memories. <a href="https://wa.me/4915786644894" target="_blank" rel="noopener">Kontakt</a></footer>
+  <section id="productionPanel" class="production-panel" hidden aria-label="Produktionsmodus">
+    <h2>Produktionsmodus · MONTMORY</h2>
+    <p>Nur für die Werkstatt. SVGs mit Kontur und Prüfbericht exportieren. Dieser Modus ist keine Zugriffssperre.</p>
+    <button id="productionExport" type="button" class="primary-button">Produktionsdateien herunterladen</button>
+    <div id="productionStatus" role="status"></div>
+  </section>
+
+  <script src="./v74-example.js?v=80"></script>
+  <script src="./v76-sample-preview.js?v=76"></script>
+  <script src="./geometry-data.js?v=58"></script>
+  <script src="./embedded-layout.js?v=58"></script>
+  <script src="./elevation-axis.js?v=58"></script>
+  <script src="./route-geometry.js?v=60"></script>
+  <script src="./viewer.js?v=69-65"></script>
+  <script src="./app.js?v=62"></script>
+  <script src="./lightburn-export.js?v=65"></script>
+  <script src="./zip-order.js?v=66"></script>
+  <script src="./order-review.js?v=66"></script>
+  <script src="./v64-features.js?v=66"></script>
+  <script src="./v66-wizard.js?v=66"></script>
+  <script src="./v67-preview.js?v=69"></script>
+  <script src="./v71-features.js?v=71"></script>
+  <script src="./v72-whatsapp.js?v=72"></script>
+  <script src="./v81-interface.js?v=81"></script>
+</body>
+</html>

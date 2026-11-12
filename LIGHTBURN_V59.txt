@@ -1,0 +1,9 @@
+MONTMORY V59 – Feines Höhenprofil in LightBurn
+
+Das blaue Höhenprofil wird jetzt als echte geschlossene Vektorfläche mit
+Sollbreite 0,18 mm exportiert, nicht als reine SVG-Strichstärke.
+In LightBurn die blaue Ebene auf FÜLLEN stellen, nicht auf LINIE.
+Die schwarze Schrift bleibt unverändert. Höhenangaben und Hilfslinien bleiben
+separat. Bei sehr engen Profilknicken die Vorschau kontrollieren.
+Das gewünschte Erscheinungsbild hängt zusätzlich von Laserpunktgröße,
+Material und Gravureinstellungen ab.

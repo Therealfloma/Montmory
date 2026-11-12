@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trail Mark Layout-Editor V50</title>
+  <link rel="stylesheet" href="./editor.css?v=1786622809">
+</head>
+<body>
+<header class="editor-header">
+  <div class="editor-brand">
+    <div class="brand-mark">⌁</div>
+    <div><strong>TRAIL MARK</strong><span>Layout-Editor · V50</span></div>
+  </div>
+
+  <div class="side-tabs">
+    <button data-side="front" class="active">Vorderseite</button>
+    <button data-side="back">Rückseite</button>
+  </div>
+
+  <div class="header-actions"><a class="shop-link" href="index.html">← Zur Kunden-Homepage</a>
+    <button id="resetLayout">Zurücksetzen</button>
+    <button id="loadBrowser">Browser-Layout laden</button>
+    <button id="saveBrowser">Im Browser speichern</button>
+    <label class="file-button">JSON laden<input id="loadLayout" type="file" accept=".json"></label>
+    <button id="saveLayout" class="primary">JSON speichern</button>
+  </div>
+</header>
+
+<main class="editor-shell">
+  <aside class="layers-panel">
+    <section>
+      <span class="eyebrow">SEITE</span>
+      <h2 id="sideName">Vorderseite</h2>
+      <p>Wähle ein Element und verschiebe oder skaliere es auf der Gravurfläche.</p>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <strong>Elemente</strong>
+        <span>Ebene</span>
+      </div>
+      <div id="elementList" class="element-list"></div>
+    </section>
+
+    <section class="grid-settings">
+      <strong>Raster & Fangpunkte</strong>
+      <label><input id="showSafeZone" type="checkbox"> 6-mm-Sicherheitskontur einblenden</label>
+      <p class="layer-help">Ausgeblendete Elemente bleiben links auswählbar und können jederzeit wieder aktiviert werden.</p>
+      <label><input id="gridEnabled" type="checkbox" checked> Raster anzeigen</label>
+      <label>Rasterweite
+        <select id="snapSize">
+          <option value="0.5">0,5 mm</option>
+          <option value="1" selected>1 mm</option>
+          <option value="2">2 mm</option>
+          <option value="5">5 mm</option>
+          <option value="0">Kein Einrasten</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="gpx-test">
+      <strong>GPX-Testdaten</strong>
+      <label class="upload-small">
+        Test-GPX laden
+        <input id="gpxFile" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml">
+      </label>
+      <div id="status">Noch keine GPX-Datei geladen.</div>
+    </section>
+  </aside>
+
+  <section class="workspace">
+    <div class="workspace-head">
+      <div>
+        <span class="eyebrow">LAYOUTFLÄCHE · 60 × 80 MM</span>
+        <h1>Gravurpositionen festlegen</h1>
+      </div>
+      <div class="legend">
+        <span><i class="blue"></i> 6-mm-Kontur</span>
+        <span><i class="purple"></i> ausgewähltes Element</span>
+        <span><i class="grid-dot"></i> 1-mm-Raster</span>
+      </div>
+    </div>
+
+    <div class="work-grid">
+      <div class="board-wrap">
+        <div id="layoutBoard" class="layout-board">
+          <svg id="safeSvg" viewBox="0 0 1024 1100" preserveAspectRatio="none"></svg>
+          <div id="objectLayer"></div>
+          <div class="board-size width-size">60 mm</div>
+          <div class="board-size height-size">80 mm</div>
+        </div>
+      </div>
+
+      <div class="viewer-column">
+        <div class="viewer-card">
+          <canvas id="threeViewer"></canvas>
+          <div id="viewerOverlay" class="viewer-overlay">
+            <div class="loader"></div>
+            <strong id="viewerMessage">3D-Vorschau wird geladen …</strong>
+          </div>
+        </div>
+
+        <div id="viewerError" class="viewer-error hidden">
+          <strong>3D-Viewer konnte nicht gestartet werden.</strong>
+          <p id="viewerErrorText"></p>
+        </div>
+
+        <div class="viewer-buttons">
+          <button id="frontView">Vorne</button>
+          <button id="backView">Hinten</button>
+          <button id="sideView">Seite</button>
+          <button id="toggleRotate">Auto-Rotation</button>
+          <button id="resetCamera">Kamera zurücksetzen</button>
+        </div>
+        <p id="diagnosticText">V50 wird initialisiert …</p>
+      </div>
+    </div>
+
+    <div class="hidden-gpx-preview">
+      <span id="previewTitle">Meine Tour</span>
+      <svg viewBox="0 0 700 240"><path id="profilePath"></path></svg>
+      <span id="previewDistance">53,3 km</span>
+      <span id="previewGain">2933 hm</span>
+      <span id="previewDuration">11:10:37 h</span>
+      <span id="previewDate">20.07.2024</span>
+      <span id="distanceValue">53,3 km</span>
+      <span id="gainValue">2933 hm</span>
+      <span id="durationValue">11:10:37 h</span>
+      <span id="dateValue">20.07.2024</span>
+    </div>
+  </section>
+
+  <aside class="properties-panel">
+    <section>
+      <span class="eyebrow">AUSGEWÄHLT</span>
+      <h2 id="selectedName">Titel</h2>
+    </section>
+
+    <section class="properties-grid">
+      <label>X-Position <input id="propX" type="number" step="0.1"><span>mm</span></label>
+      <label>Y-Position <input id="propY" type="number" step="0.1"><span>mm</span></label>
+      <label>Breite <input id="propW" type="number" step="0.1"><span>mm</span></label>
+      <label>Höhe <input id="propH" type="number" step="0.1"><span>mm</span></label>
+      <label class="full">Schriftgröße <input id="propFont" type="number" step="0.1"><span>mm</span></label>
+    </section>
+
+    <section class="toggle-section">
+      <label><input id="propVisible" type="checkbox" checked> Sichtbar</label>
+      <label><input id="propLocked" type="checkbox"> Element sperren</label>
+    </section>
+
+    <section class="help-card">
+      <strong>Bedienung</strong>
+      <p>Element ziehen: verschieben</p>
+      <p>Eckpunkte ziehen: Größe ändern</p>
+      <p>Werte rechts: millimetergenau einstellen</p>
+      <p>JSON speichern: später in Kunden-Homepage übernehmen</p>
+    </section>
+  </aside>
+</main>
+
+<script src="./geometry-data.js?v=58"></script>
+<script src="./embedded-layout.js?v=58"></script>
+  <script src="./viewer.js?v=58"></script>
+<script src="./app.js?v=58"></script>
+<script src="./layout-editor.js?v=58"></script>
+</body>
+</html>

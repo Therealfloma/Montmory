@@ -1,0 +1,11 @@
+MONTMORY V81 – Premium-Konfigurator
+
+- Vereinfachte Vorschau-Umschaltung: 3D-Ansicht / Vorder-/Rückseite.
+- Vorhandene 3D-WebGL-Funktionen und deren Steuerung bleiben erhalten.
+- Aufgeräumter Gestaltungsbereich; Profil-Auswahl unter „Erweiterte Gestaltung“.
+- Mobil wird die Produktvorschau vor den Eingabefeldern angezeigt.
+- Produktinformationen mit ca. 60 × 80 mm, Holz und individueller Gravur.
+- Bestehende GPX-Beispieltour, Galerie, LightBurn-Exporte und Bestellablauf unverändert.
+- Kein Warenkorb und keine neuen Holzvarianten hinzugefügt.
+
+Prüfung: JavaScript-Syntax und ZIP-Integrität. Kein vollständiger Browser- oder LightBurn-Test.
