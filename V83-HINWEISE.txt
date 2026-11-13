@@ -1,0 +1,14 @@
+MONTMORY V83 – Über MONTMORY
+
+NEU:
+- Eigene Seite ueber-montmory.html
+- Navigation zwischen Konfigurator und Über MONTMORY
+- Mobil optimierte Darstellung
+- Texte in ueber-montmory.html direkt editierbar
+- Bilder austauschbar (derzeit Entwurfsbild galerie-gravur.jpg)
+
+GITHUB PAGES:
+ZIP entpacken und alle enthaltenen Dateien ins Repository-Hauptverzeichnis hochladen.
+Die bisherigen Dateien mit gleichem Namen werden aktualisiert.
+
+HINWEIS: Bild und Markengeschichte sind Platzhalter und sollten vor der finalen Veröffentlichung geprüft und angepasst werden.
