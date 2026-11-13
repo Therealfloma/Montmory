@@ -1,0 +1,16 @@
+MONTMORY V82 – Smartphone-GPX-Import
+
+Neu:
+- Importhilfe für Garmin Connect, komoot und Strava direkt unter der Dateiauswahl.
+- Klare iPhone-/Android-Dateiauswahl und besser lesbare Importfehlermeldungen.
+- Unterstützung von GPX-Routenpunkten (rtept), wenn keine Trackpunkte (trkpt) vorliegen.
+- Dieselbe Datei kann nach einem Import erneut ausgewählt werden.
+- Sicherheitsgrenze von 40 MB für GPX-Dateien.
+
+Wichtig:
+- Kein direkter Kontoimport über Garmin/komoot/Strava-API.
+- GPX muss zuerst beim jeweiligen Anbieter exportiert und auf dem Smartphone gespeichert werden.
+- Kein automatischer App-Start oder Zugriff auf gespeicherte Touren.
+- Keine realen Geräte-/Browser-Tests durchgeführt.
+
+GitHub Pages: Alle Dateien aus dem ZIP in das Repository-Hauptverzeichnis hochladen und vorhandene Dateien ersetzen.

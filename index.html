@@ -24,15 +24,24 @@
         <section class="card upload-card" data-wizard-step="1">
           <div class="step">1</div>
           <div class="card-content">
-            <h2>Deine Tour importieren</h2><p class="upload-description">Lade die GPX-Datei deiner Tour hoch. Daraus erstellen wir dein persönliches Höhenprofil.</p>
+            <h2>Deine Tour importieren</h2><p class="upload-description">Wähle eine GPX-Datei aus deinem Smartphone. Du kannst Touren aus Garmin, komoot oder Strava vorher als GPX exportieren.</p>
             <label class="upload">
               <span class="upload-icon">↥</span>
-              <span><strong>GPX-Datei auswählen</strong><small>oder hierhin ziehen · .gpx</small></span>
-              <input id="gpxFile" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml">
+              <span><strong>GPX-Datei auswählen</strong><small>iPhone: Dateien · Android: Dateien / Downloads</small></span>
+              <input id="gpxFile" type="file" accept=".gpx,.xml,application/gpx+xml,application/xml,text/xml,application/octet-stream">
             </label>
+            <div class="mobile-import-help">
+              <details class="import-help-main"><summary>Tour noch in Garmin, komoot oder Strava? <span>So geht’s</span></summary>
+                <p>Exportiere die gewünschte Tour in deiner App oder im Browser als <strong>GPX-Datei</strong>. Öffne danach MONTMORY erneut und tippe auf „GPX-Datei auswählen“.</p>
+                <details><summary>Garmin Connect</summary><p>Öffne die Aktivität auf der Garmin-Connect-Website im Browser. Nutze im Aktivitätsmenü „Als GPX exportieren“, sofern für diese Aktivität angeboten. Speichere die Datei unter „Downloads“ bzw. „Dateien“. In der Garmin-App selbst ist der GPX-Export nicht immer verfügbar.</p><a href="https://connect.garmin.com/" target="_blank" rel="noopener noreferrer">Garmin Connect öffnen ↗</a></details>
+                <details><summary>komoot</summary><p>Öffne die geplante oder aufgezeichnete Tour in komoot. Suche nach „GPX-Datei herunterladen“ bzw. „GPX exportieren“ (gegebenenfalls im Menü der Tour). Speichere die Datei und wähle sie anschließend hier aus. Die Exportoptionen können je nach Tour und Konto variieren.</p><a href="https://www.komoot.com/" target="_blank" rel="noopener noreferrer">komoot öffnen ↗</a></details>
+                <details><summary>Strava</summary><p>Öffne die Aktivität auf der Strava-Website im Browser und wähle im Aktivitätsmenü „GPX exportieren“, sofern verfügbar. Speichere die GPX-Datei und importiere sie anschließend hier. Bei fremden Aktivitäten oder bestimmten Tourentypen kann der Export eingeschränkt sein.</p><a href="https://www.strava.com/" target="_blank" rel="noopener noreferrer">Strava öffnen ↗</a></details>
+                <p class="import-help-note">Hinweis: Ein Tour-Link oder „Teilen“ allein enthält normalerweise keine GPX-Datei. Die drei Anbieter sind nicht direkt mit MONTMORY verbunden.</p>
+              </details>
+            </div>
             <details class="advanced-tools"><summary>Weitere Optionen</summary><div class="save-tools"><button type="button" id="saveConfig" class="review-cancel">Konfiguration speichern</button><label class="review-cancel file-button">Konfiguration laden<input id="loadConfig" type="file" accept=".json,application/json" hidden></label></div>
             <div id="saveStatus" class="muted" role="status"></div></details>
-            <div id="status" class="status">Noch keine GPX-Datei geladen.</div><div class="sample-gpx"><span>Keine GPX-Datei zur Hand?</span><button type="button" id="loadExampleGpx">Beispieltour ausprobieren →</button></div>
+            <div id="status" class="status" role="status" aria-live="polite">Noch keine GPX-Datei geladen.</div><div class="sample-gpx"><span>Keine GPX-Datei zur Hand?</span><button type="button" id="loadExampleGpx">Beispieltour ausprobieren →</button></div>
           </div>
         </section>
 

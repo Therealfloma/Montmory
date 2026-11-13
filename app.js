@@ -147,6 +147,7 @@ gpxFile.addEventListener("change", async () => {
   statusEl.textContent = "GPX wird analysiert …";
 
   try {
+    if (file.size > 40 * 1024 * 1024) throw new Error("Die Datei ist größer als 40 MB. Bitte eine kleinere GPX-Datei exportieren.");
     const text = await file.text();
     const xml = new DOMParser().parseFromString(text, "application/xml");
 
@@ -154,10 +155,13 @@ gpxFile.addEventListener("change", async () => {
       throw new Error("Die Datei ist kein gültiges GPX/XML.");
     }
 
-    const nodes = [...xml.getElementsByTagNameNS("*", "trkpt")];
+    // Manche Smartphone-Exporte enthalten Routenpunkte statt Trackpunkte.
+    const trackNodes = [...xml.getElementsByTagNameNS("*", "trkpt")];
+    const routeNodes = [...xml.getElementsByTagNameNS("*", "rtept")];
+    const nodes = trackNodes.length >= 2 ? trackNodes : routeNodes;
 
     if (nodes.length < 2) {
-      throw new Error("Zu wenige Trackpunkte gefunden.");
+      throw new Error("Keine GPX-Strecke gefunden. Bitte eine Tour mit mindestens zwei Track- oder Routenpunkten exportieren.");
     }
 
     const points = nodes
@@ -191,7 +195,10 @@ gpxFile.addEventListener("change", async () => {
     statusEl.textContent =
       `${file.name} erfolgreich geladen · Gravur automatisch aktualisiert.`;
   } catch (error) {
-    statusEl.textContent = `Fehler: ${error.message}`;
+    statusEl.textContent = `Fehler beim Import: ${error.message}`;
+  } finally {
+    // Dieselbe Datei kann auf iOS/Android erneut ausgewählt werden.
+    gpxFile.value = "";
   }
 });
 
