@@ -1,0 +1,8 @@
+MONTMORY V84 – Änderungen
+
+- Rotation und Zurücksetzen sind direkt unter der 3D-Vorschau sichtbar (ohne Aufklappmenü).
+- Mobile Breite des Konfigurators an iPhone- und Android-Bildschirme angepasst.
+- Über-MONTMORY-Seite bleibt erhalten.
+- Alle übrigen Konfiguratorfunktionen aus V83 beibehalten.
+
+Installation: ZIP entpacken und den INHALT auf GitHub hochladen. index.html muss im Hauptverzeichnis liegen.

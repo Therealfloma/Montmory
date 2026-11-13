@@ -665,3 +665,32 @@ html{scroll-behavior:smooth}body{background:#f6f2eb;color:#282a26}.brand-header{
 @media(max-width:940px){.about-intro{gap:35px}.about-feature-text{padding:35px}}
 @media(max-width:600px){.brand-meta .nav-about-link{font-size:11px;padding:6px 0}.brand-meta .nav-design{display:inline-block;font-size:11px;padding:6px 0}.brand-meta{gap:12px}.brand-meta .brand-about,.header-contact{display:none!important}.brand-inner{gap:8px}.company-logo{max-width:125px;height:auto}.about-hero{min-height:360px}.about-hero-inner{width:calc(100% - 38px);padding:45px 0}.about-hero p:last-child{font-size:15px}.about-content{padding:54px 20px 75px}.about-intro{grid-template-columns:1fr;gap:22px;margin-bottom:56px}.about-feature{grid-template-columns:1fr;margin-bottom:62px}.about-feature img{min-height:220px;max-height:260px}.about-feature-text{padding:32px 26px}.about-quote{margin-bottom:55px}.about-cta{padding-top:45px}}
 @media(max-width:365px){.company-logo{max-width:100px}.brand-meta{gap:8px}.brand-meta .nav-about-link,.brand-meta .nav-design{font-size:10px}}
+
+/* V84: permanent sichtbare 3D-Bedienung und mobile Breitenkorrektur */
+.viewer-card.showing-sample .viewer-footer { visibility:visible; }
+.viewer-actions {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.viewer-action-buttons {display:flex;gap:9px;flex-wrap:wrap;min-width:0;}
+.viewer-actions .viewer-action-buttons button {display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:9px 14px;border:1px solid #c9d1c4;border-radius:10px;background:#f4f7f0;color:#284734;font-weight:700;font-size:12px;}
+.viewer-actions .viewer-action-buttons button:hover {background:#e6eee3;}
+.viewer-actions .viewer-action-buttons button:focus-visible {outline:3px solid #80a28b;outline-offset:2px;}
+.viewer-actions>span {font-size:11px;color:#756e63;}
+@media(max-width:940px){
+  html,body {max-width:100%;overflow-x:clip;}
+  .configurator-shell {width:calc(100% - 20px)!important;max-width:100%;min-width:0;padding:12px!important;margin-left:auto;margin-right:auto;}
+  .config-grid,.controls-column,.viewer-card,.card,.card-content,.viewer-header,.viewer-stage,.wizard-nav {min-width:0;max-width:100%;}
+  .config-grid,.controls-column {width:100%;}
+  .viewer-card,.card {width:100%;}
+  .viewer-header,.view-tabs {flex-wrap:wrap;}
+  .viewer-actions {align-items:stretch;}
+  .viewer-actions .viewer-action-buttons {width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
+  .viewer-actions .viewer-action-buttons button {min-width:0;padding:10px 5px;font-size:12px;}
+  .viewer-actions>span {display:none;}
+  .two-fields,.number-field,.field,.upload,.import-help-main {min-width:0;max-width:100%;}
+  input,select,textarea {max-width:100%;}
+}
+@media(max-width:380px){
+ .configurator-shell{width:calc(100% - 12px)!important;padding:8px!important;}
+ .viewer-header{padding:13px 11px;}
+ .viewer-actions{padding:9px 10px;}
+ .viewer-actions .viewer-action-buttons button{font-size:11px;}
+}
