@@ -144,6 +144,8 @@ gpxFile.addEventListener("change", async () => {
   const file = gpxFile.files?.[0];
   if (!file) return;
 
+  window.__trailMarkLastResult = null;
+  window.dispatchEvent(new Event("trailmark:gpx-reset"));
   statusEl.textContent = "GPX wird analysiert …";
 
   try {
@@ -196,9 +198,6 @@ gpxFile.addEventListener("change", async () => {
       `${file.name} erfolgreich geladen · Gravur automatisch aktualisiert.`;
   } catch (error) {
     statusEl.textContent = `Fehler beim Import: ${error.message}`;
-  } finally {
-    // Dieselbe Datei kann auf iOS/Android erneut ausgewählt werden.
-    gpxFile.value = "";
   }
 });
 
