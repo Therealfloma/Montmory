@@ -36,13 +36,24 @@ async function inspect(svg,side){
   try{
     await document.fonts?.ready;
     const texts=Array.from(node.querySelectorAll('text'));
-    const boxes=[];
-    for(const t of texts){
-      for(const t of texts){
-      // Leere Texte dürfen keine Gravurfehler auslösen.
-      if(!(t.textContent || '').trim()) continue;
+    
+  const boxes=[];
+  for(const t of texts){
+  // Leere Texte bei der Gravurprüfung überspringen.
+  if(!(t.textContent || '').trim()) continue;
 
-      let r;try{r=t.getBBox();}catch{continue;}
+  let r;
+  try {
+    r=t.getBBox();
+  } catch {
+    continue;
+  }
+
+  const m=t.getCTM();
+  if(!m) continue;
+
+  const corners=
+
       const corners=[[r.x,r.y],[r.x+r.width,r.y],[r.x,r.y+r.height],[r.x+r.width,r.y+r.height]].map(([x,y])=>({x:m.a*x+m.c*y+m.e,y:m.b*x+m.d*y+m.f}));
       const box={minX:Math.min(...corners.map(p=>p.x)),maxX:Math.max(...corners.map(p=>p.x)),minY:Math.min(...corners.map(p=>p.y)),maxY:Math.max(...corners.map(p=>p.y)),name:t.textContent.trim().slice(0,28)};
       // getCTM may include scaling to CSS pixels; normalize against displayed SVG dimensions.
