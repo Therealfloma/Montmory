@@ -8,7 +8,7 @@
   const recipient='florianmachoczek@t-online.de';
   let review=null, busy=false, previewUrls=[];
   function signature(){
-    const f=$('gpxFile')?.files?.[0];
+    const f=window.__montmoryGpxFile || $('gpxFile')?.files?.[0];
     return JSON.stringify({gpx:f?[f.name,f.size,f.lastModified]:null,
       title:$('titleInput')?.value,km:$('distanceInput')?.value,hm:$('gainInput')?.value,
       mode:document.querySelector('input[name="profileMode"]:checked')?.value,
@@ -20,7 +20,7 @@
   }
   function reset(){
     previewUrls.forEach(URL.revokeObjectURL);previewUrls=[];
-    review=null;window.MontmoryV64 && (window.MontmoryV64.lastReview=null);panel.hidden=true;button.textContent='Konfiguration senden';
+    review=null;window.MontmoryV64 && (window.MontmoryV64.lastReview=null);panel.hidden=true;button.textContent='Bestellung prüfen →';
   }
   function invalidate(){if(!review || busy)return;reset();status.textContent='Änderung erkannt. Bitte die Konfiguration erneut prüfen.';}
   ['gpxFile','titleInput','distanceInput','gainInput','markWidthMM','markHeightMM','includeOuterContour','giftEnabled','giftMessage','customerName','customerEmail','customerNote'].forEach(id=>{
@@ -70,7 +70,7 @@
     if(busy)return;busy=true;button.disabled=true;
     try{
       if(!review){
-        if(!$('gpxFile')?.files?.[0] || !window.__trailMarkLastResult)
+        if(!(window.__montmoryImportState?.status==='ready' && window.__trailMarkLastResult && window.__montmoryGpxFile))
           throw new Error('Bitte zuerst eine gültige GPX-Datei hochladen.');
         if(!$('customerName')?.value.trim())throw new Error('Bitte deinen Namen eingeben.');
         if(!$('customerEmail')?.checkValidity())throw new Error('Bitte eine gültige E-Mail-Adresse eingeben.');
@@ -104,10 +104,12 @@
         if(review.warnings.some(w=>w.level==='error')) throw new Error('Gravurprüfung meldet einen kritischen Fehler. Bitte die Konfiguration korrigieren.');
         await window.MontmoryZipOrder.download(review);
         const url=mailto();
-        status.textContent='ZIP-Download gestartet. Bitte die ZIP-Datei in der E-Mail-App anhängen und dort auf Senden klicken. Falls sich die App nicht öffnet, nutze den Link unten.';
+        status.textContent='Bestell-ZIP wurde zum Download angeboten. Bitte die ZIP-Datei an die vorbereitete E-Mail anhängen und dort auf Senden klicken. Die Bestellung ist erst nach dem E-Mail-Versand übermittelt.';
         const link=$('openEmailDraft');
         if(link){link.href=url;link.hidden=false;}
-        window.location.href=url;
+        // Auf Mobilgeräten kann das Öffnen der Mail-App nach einem asynchronen Download blockiert werden.
+        // Deshalb bleibt ein expliziter, verlässlicher Link sichtbar.
+        try { window.location.href=url; } catch (_) { /* manueller Link bleibt verfügbar */ }
       }
     }catch(e){status.textContent=`Aktion nicht abgeschlossen: ${e.message}`;}
     finally{busy=false;button.disabled=false;}

@@ -1,0 +1,7 @@
+MONTMORY V89 – Änderungen dieser Version
+- Bestellabschluss verwendet erfolgreich importierte GPX-Datei auch nach Leeren des Uploadfelds.
+- GPX-Datei wird für ZIP-Bestellung zentral gespeichert.
+- Höhenprofil/Strecke auf Vorderseite direkt sichtbar.
+- Bestellvorschau Vorder-/Rückseite gleich groß.
+- LightBurn-Bereich nur in ?production=1 sichtbar (kein geschützter Zugang).
+- E-Mail muss weiterhin manuell mit ZIP-Anhang gesendet werden.

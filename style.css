@@ -694,3 +694,13 @@ html{scroll-behavior:smooth}body{background:#f6f2eb;color:#282a26}.brand-header{
  .viewer-actions{padding:9px 10px;}
  .viewer-actions .viewer-action-buttons button{font-size:11px;}
 }
+
+/* V89: Produktionswerkzeuge bleiben im öffentlichen Konfigurator unsichtbar. */
+#lightburnTools[hidden]{display:none!important}
+/* Profilseite ist eine wesentliche Gestaltungsoption. */
+.profile-choice-visible{display:block!important;margin:16px 0 0;min-width:0}
+/* Gleiche Vorschaufläche für beide Seiten, auch mobil. */
+.order-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch}
+.order-preview-grid figure{display:flex;flex-direction:column;min-width:0}
+.order-preview-grid img{width:100%;height:auto!important;aspect-ratio:3/4;object-fit:contain;flex:1;min-height:0}
+@media(max-width:520px){.order-preview-grid{gap:7px}.order-preview-grid figure{padding:6px}.order-preview-grid figcaption{font-size:11px}}

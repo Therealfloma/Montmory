@@ -22,7 +22,7 @@ function pack(files){
  return new Blob([...chunks,...central,new Uint8Array([0x50,0x4b,5,6,...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(csize),...u32(offset),...u16(0)])],{type:'application/zip'});
 }
 async function download(review){
- const gp=document.getElementById('gpxFile')?.files?.[0];
+ const gp=window.__montmoryGpxFile || document.getElementById('gpxFile')?.files?.[0];
  if(!gp)throw new Error('GPX-Datei fehlt.');
  const number=review.orderNumber;
  const manifest={bestellnummer:number,erstellt:new Date().toISOString(),tour:document.getElementById('titleInput')?.value||'',

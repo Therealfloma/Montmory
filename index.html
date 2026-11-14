@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="MONTMORY Trail Mark GPX-Konfigurator">
   <title>MONTMORY – Dein Trail Mark</title>
-  <link rel="stylesheet" href="./style.css?v=84">
+  <link rel="stylesheet" href="./style.css?v=89">
 </head>
 <body>
   <header class="brand-header">
@@ -68,7 +68,7 @@
 
             <label class="field"><span>Persönliche Widmung (optional)</span><label class="gift-toggle"><input type="checkbox" id="giftEnabled"> Widmung auf der Rückseite hinzufügen</label></label>
             <label class="field" id="giftMessageWrap" hidden><span>Widmung (max. 30 Zeichen)</span><input id="giftMessage" type="text" maxlength="30" placeholder="Für dich, mein Gipfelheld!"><small>Die Widmung erscheint auf der Rückseite. Ohne Widmung bleibt dieser Bereich frei.</small></label>
-            <details class="v81-advanced"><summary>Erweiterte Gestaltung</summary><fieldset class="profile-choice">
+            <fieldset class="profile-choice profile-choice-visible">
               <legend>Grafik auf der Vorderseite</legend>
               <label>
                 <input type="radio" name="profileMode" value="elevation" checked>
@@ -78,7 +78,7 @@
                 <input type="radio" name="profileMode" value="route">
                 <span><strong>Strecke</strong><small>Höhenprofil automatisch hinten</small></span>
               </label>
-            </fieldset></details>
+            </fieldset>
           </div>
         </section>
 
@@ -110,7 +110,7 @@
             </div>
             <p class="muted">Prüfe deine beiden Gravurseiten. Danach wird eine ZIP-Bestelldatei heruntergeladen und dein E-Mail-Programm vorbereitet.</p>
             <button id="sendConfiguration" type="button" class="primary-button">Bestellung prüfen <span aria-hidden="true">→</span></button>
-            <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Bitte zuerst eine GPX-Datei hochladen.</div>
+            <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Lade deine Tour und gib deine Kontaktdaten ein.</div>
             <div class="whatsapp-order"><span>Du bist dir noch unsicher?</span><a id="whatsappOrder" class="whatsapp-link" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer">Frage zu meiner Bestellung per WhatsApp ↗</a><p class="muted whatsapp-hint">WhatsApp dient nur zur Beratung – es wird keine Bestellung versendet.</p></div>
             <a id="openEmailDraft" href="#" hidden>E-Mail-Entwurf erneut öffnen</a>
             <div id="orderReview" class="order-review" hidden>
@@ -121,13 +121,13 @@
                 <figure><figcaption>Vorderseite</figcaption><img id="orderPreviewFront" alt="SVG-Gravur Vorderseite"></figure>
                 <figure><figcaption>Rückseite</figcaption><img id="orderPreviewBack" alt="SVG-Gravur Rückseite"></figure>
               </div>
-              <p class="muted"><strong>Wichtig:</strong> Nach dem Bestätigen wird eine ZIP-Datei mit beiden SVG-Dateien, der GPX-Datei und den Bestelldaten heruntergeladen. Bitte füge diese ZIP-Datei manuell als Anhang hinzu und klicke in deiner E-Mail-App auf Senden. Es wird nichts automatisch verschickt.</p>
+              <p class="muted"><strong>Wichtig:</strong> Nach dem Bestätigen wird eine ZIP-Datei mit beiden SVG-Dateien, der GPX-Datei und den Bestelldaten heruntergeladen. Bitte füge diese ZIP-Datei manuell als Anhang hinzu und klicke in deiner E-Mail-App auf Senden. Erst dann ist deine Bestellanfrage übermittelt.</p>
               <button type="button" id="cancelOrderReview" class="review-cancel">Zurück zur Bearbeitung</button>
             </div>
           </div>
         </section>
 
-        <section class="card svg-export-panel" data-wizard-step="3">
+        <section class="card svg-export-panel" data-wizard-step="3" id="lightburnTools">
           <div class="step">4</div>
           <div class="card-content">
             <h2>Gravur für LightBurn</h2>
@@ -253,15 +253,22 @@
   <script src="./elevation-axis.js?v=58"></script>
   <script src="./route-geometry.js?v=60"></script>
   <script src="./viewer.js?v=69-65"></script>
-  <script src="./app.js?v=88"></script>
+  <script src="./app.js?v=89"></script>
   <script src="./lightburn-export.js?v=65"></script>
-  <script src="./zip-order.js?v=66"></script>
-  <script src="./order-review.js?v=66"></script>
+  <script src="./zip-order.js?v=89"></script>
+  <script src="./order-review.js?v=89"></script>
   <script src="./v64-features.js?v=66"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>
   <script src="./v71-features.js?v=71"></script>
   <script src="./v72-whatsapp.js?v=72"></script>
   <script src="./v81-interface.js?v=81"></script>
+<script>
+  // Nur eine Bedienansicht: Produktionsmodus ist kein Passwortschutz.
+  if (new URLSearchParams(location.search).get("production") !== "1") {
+    const tools = document.getElementById("lightburnTools");
+    if (tools) tools.hidden = true;
+  }
+</script>
 </body>
 </html>

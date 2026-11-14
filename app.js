@@ -190,6 +190,7 @@ gpxFile.addEventListener("change", async () => {
 
     const result = analyseTrack(points);
     currentTrackPoints = points;
+    window.__montmoryGpxFile = file;
     window.__trailMarkLastResult = result;
     window.__montmoryImportState = {status:"ready",fileName:file.name,points:points.length};
     renderResult(result);
@@ -200,6 +201,7 @@ gpxFile.addEventListener("change", async () => {
     statusEl.textContent =
       `${file.name} erfolgreich geladen · Gravur automatisch aktualisiert.`;
   } catch (error) {
+    window.__montmoryGpxFile = null;
     window.__trailMarkLastResult = null;
     window.__montmoryImportState = {status:"error",message:error.message};
     window.dispatchEvent(new CustomEvent("montmory:import-state", {detail:window.__montmoryImportState}));
