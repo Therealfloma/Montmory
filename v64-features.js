@@ -36,22 +36,12 @@ async function inspect(svg,side){
   try{
     await document.fonts?.ready;
     const texts=Array.from(node.querySelectorAll('text'));
-    
-  const boxes=[];
-  for(const t of texts){
-  // Leere Texte bei der Gravurprüfung überspringen.
-  if(!(t.textContent || '').trim()) continue;
-
-  let r;
-  try {
-    r=t.getBBox();
-  } catch {
-    continue;
-  }
-
-  const m=t.getCTM();
-  if(!m) continue;
-
+    const boxes=[];
+    for(const t of texts){
+      // Leere SVG-Textknoten (z. B. Widmung ohne Eingabe) haben keine Gravur und dürfen nicht geprüft werden.
+      if(!(t.textContent||'').trim())continue;
+      let r;try{r=t.getBBox();}catch{continue;}
+      const m=t.getCTM();if(!m)continue;
       const corners=[[r.x,r.y],[r.x+r.width,r.y],[r.x,r.y+r.height],[r.x+r.width,r.y+r.height]].map(([x,y])=>({x:m.a*x+m.c*y+m.e,y:m.b*x+m.d*y+m.f}));
       const box={minX:Math.min(...corners.map(p=>p.x)),maxX:Math.max(...corners.map(p=>p.x)),minY:Math.min(...corners.map(p=>p.y)),maxY:Math.max(...corners.map(p=>p.y)),name:t.textContent.trim().slice(0,28)};
       // getCTM may include scaling to CSS pixels; normalize against displayed SVG dimensions.
@@ -74,9 +64,7 @@ async function inspect(svg,side){
   const viewBox=(root.getAttribute('viewBox')||'0 0 1024 1152').trim().split(/[\s,]+/).map(Number);
   const svgUnitsPerMM=(viewBox[3]||1152)/height;
   for(const t of root.querySelectorAll('text')){
-    // Keine Schriftgrößenwarnung für leere Texte.
-    if(!(t.textContent || '').trim()) continue;
-
+    if(!(t.textContent||'').trim())continue;
     const size=parseFloat(t.getAttribute('font-size'));
     if(Number.isFinite(size) && size/svgUnitsPerMM<1.8){
       issues.push({level:'warn',message:`${side}: Schrift „${(t.textContent||'').trim().slice(0,24)}“ ist nur ${(size/svgUnitsPerMM).toFixed(2)} mm hoch (Richtwert mindestens 1,8 mm).`});

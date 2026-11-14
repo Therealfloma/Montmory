@@ -81,6 +81,7 @@
           window.MontmorySvgExport.createSvg('back')
         ]);
         if(signature()!==before)throw new Error('Einstellungen geändert. Bitte erneut prüfen.');
+        if(!window.MontmoryV64 || typeof window.MontmoryV64.orderNumber!=='function' || typeof window.MontmoryV64.check!=='function') throw new Error('Gravurprüfung konnte nicht geladen werden. Bitte Seite vollständig neu laden.');
         const orderNumber=window.MontmoryV64.orderNumber();
         const warnings=await window.MontmoryV64.check(front.svg,back.svg);
         warnings.push(...window.MontmoryV71.validateSvg(front.svg,'Vorderseite'));
