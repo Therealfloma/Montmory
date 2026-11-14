@@ -144,8 +144,9 @@ gpxFile.addEventListener("change", async () => {
   const file = gpxFile.files?.[0];
   if (!file) return;
 
+  window.__montmoryImportState = { status: "loading", fileName: file.name };
   window.__trailMarkLastResult = null;
-  window.dispatchEvent(new Event("trailmark:gpx-reset"));
+  window.dispatchEvent(new CustomEvent("montmory:import-state", {detail: window.__montmoryImportState}));
   statusEl.textContent = "GPX wird analysiert …";
 
   try {
@@ -190,14 +191,22 @@ gpxFile.addEventListener("change", async () => {
     const result = analyseTrack(points);
     currentTrackPoints = points;
     window.__trailMarkLastResult = result;
+    window.__montmoryImportState = {status:"ready",fileName:file.name,points:points.length};
     renderResult(result);
     applyProfileMode();
     window.dispatchEvent(new Event("trailmark:gpx-ready"));
+    window.dispatchEvent(new CustomEvent("montmory:import-state", {detail:window.__montmoryImportState}));
 
     statusEl.textContent =
       `${file.name} erfolgreich geladen · Gravur automatisch aktualisiert.`;
   } catch (error) {
+    window.__trailMarkLastResult = null;
+    window.__montmoryImportState = {status:"error",message:error.message};
+    window.dispatchEvent(new CustomEvent("montmory:import-state", {detail:window.__montmoryImportState}));
     statusEl.textContent = `Fehler beim Import: ${error.message}`;
+  } finally {
+    // Dieselbe Datei kann auf iOS/Android erneut ausgewählt werden.
+    gpxFile.value = "";
   }
 });
 

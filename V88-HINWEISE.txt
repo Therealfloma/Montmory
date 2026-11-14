@@ -1,0 +1,1 @@
+V88: GPX-Importstatus und Schrittnavigation vereinheitlicht. Erfolg/Fehler/Laden zentral; Browsercache-Version aktualisiert. Basis V84. Test: Beispieltour, echte GPX, ungültige GPX, Navigation.
