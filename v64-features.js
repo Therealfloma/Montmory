@@ -52,8 +52,6 @@ async function inspect(svg,side){
   const m=t.getCTM();
   if(!m) continue;
 
-  const corners=
-
       const corners=[[r.x,r.y],[r.x+r.width,r.y],[r.x,r.y+r.height],[r.x+r.width,r.y+r.height]].map(([x,y])=>({x:m.a*x+m.c*y+m.e,y:m.b*x+m.d*y+m.f}));
       const box={minX:Math.min(...corners.map(p=>p.x)),maxX:Math.max(...corners.map(p=>p.x)),minY:Math.min(...corners.map(p=>p.y)),maxY:Math.max(...corners.map(p=>p.y)),name:t.textContent.trim().slice(0,28)};
       // getCTM may include scaling to CSS pixels; normalize against displayed SVG dimensions.
