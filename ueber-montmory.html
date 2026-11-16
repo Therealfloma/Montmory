@@ -3,9 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Die Idee hinter MONTMORY: Erinnerungen an besondere Touren, festgehalten in Holz.">
+  <meta name="description" content="MONTMORY macht aus besonderen Touren persönliche Erinnerungen. Entdecke Trail Marks und das magnetische Sammelsystem für dein MONTMORY Board.">
   <title>Über MONTMORY – From Mountains to Memories</title>
   <link rel="stylesheet" href="./style.css?v=83">
+<style>
+/* Ergänzungen ausschließlich für die Über-MONTMORY-Seite */
+.about-collection{padding:clamp(24px,5vw,64px);margin:36px 0;border-radius:22px;background:#f1efe6;color:#263f34}
+.about-collection h2{max-width:720px;margin:8px 0 16px}
+.about-collection>p{max-width:780px;line-height:1.75}
+.collection-visual{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(180px,.7fr);gap:clamp(16px,4vw,48px);align-items:center;margin-top:28px}
+.collection-board{background:linear-gradient(125deg,#c7a77b,#e1cba7 52%,#b99468);border:10px solid #8b6846;border-radius:16px;box-shadow:0 14px 30px #3c2f2040;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,2vw,18px);padding:clamp(12px,3vw,26px);min-height:290px}
+.collection-mark{aspect-ratio:3/4;border-radius:9px;background:linear-gradient(120deg,#e8d8b8,#f5e8cf);border:1px solid #bca47e;box-shadow:2px 3px 6px #463a2a35;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:8px;padding:8px;color:#465244;transform:rotate(var(--tilt,0deg))}
+.collection-mark svg{width:85%;height:45%;fill:none;stroke:#526a56;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.collection-mark strong{font-size:clamp(9px,1.4vw,13px);letter-spacing:.05em}
+.collection-mark small{font-size:clamp(8px,1.1vw,11px)}
+.collection-empty{border:2px dashed #896c4c70;border-radius:9px;display:grid;place-items:center;color:#5d4e39;font-size:12px;text-align:center;padding:8px}
+.collection-explain{display:grid;gap:17px}
+.collection-step{display:flex;gap:13px;align-items:flex-start}
+.collection-step b{flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:#315343;color:#fff;display:grid;place-items:center}
+.collection-step p{margin:2px 0 0;line-height:1.55}
+.collection-note{font-size:12px;opacity:.75;margin-top:16px}
+@media(max-width:680px){.collection-visual{grid-template-columns:1fr}.collection-board{min-height:260px}.collection-mark strong{font-size:11px}.collection-mark small{font-size:9px}}
+</style>
 </head>
 <body class="about-page">
   <header class="brand-header">
@@ -34,7 +53,31 @@
         <div class="about-copy">
           <p>Es gibt Touren, an die wir uns noch Jahre später erinnern: der erste Gipfel, eine besondere Wanderung oder ein Weg, den wir mit wichtigen Menschen geteilt haben.</p>
           <p>MONTMORY ist aus dem Wunsch entstanden, genau diese Momente festzuhalten – nicht nur als digitale Aufzeichnung, sondern als kleines Stück Erinnerung, das man in die Hand nehmen kann.</p>
-          <p>Jeder Trail Mark erzählt seine eigene Geschichte. Deine Route wird zur individuellen Gravur auf Holz.</p>
+          <p>Jeder Trail Mark erzählt seine eigene Geschichte. Deine Route wird zur individuellen Gravur auf Holz – ein persönlicher Meilenstein, der bleibt.</p>
+          <p>Doch eine Erinnerung ist erst der Anfang: Mit MONTMORY kannst du deine Erlebnisse nach und nach sammeln und sichtbar machen.</p>
+        </div>
+      </section>
+      <section class="about-collection" aria-labelledby="collection-title">
+        <p class="about-kicker">Das MONTMORY Sammelsystem</p>
+        <h2 id="collection-title">Eine Tour. Ein Trail Mark. Deine wachsende Sammlung.</h2>
+        <p>Ob erster Gipfel, Lieblingsrunde oder großer Ultratrail: Jeder Trail Mark steht für ein Erlebnis, das dir etwas bedeutet. Auf deinem MONTMORY Board finden diese Momente einen gemeinsamen Platz. Dank des magnetischen Konzepts kannst du deine Trail Marks ergänzen und immer wieder neu anordnen.</p>
+        <div class="collection-visual">
+          <figure class="collection-photo" style="margin:0">
+            <img src="./montmory-sammelsystem-originalform.jpg" alt="MONTMORY Sammelboard mit Berggravur, fünf Trail Marks in charakteristischer Gipfelform und persönlicher Beschriftung" loading="lazy" style="display:block;width:100%;height:auto;border-radius:16px;box-shadow:0 14px 30px #3c2f2040">
+          </figure>
+          <div class="collection-explain">
+            <div class="collection-step"><b>1</b><p><strong>Erleben</strong><br>Deine Tour laufen, wandern oder einen persönlichen Meilenstein erreichen.</p></div>
+            <div class="collection-step"><b>2</b><p><strong>Gestalten</strong><br>Die GPX-Strecke hochladen und deinen individuellen Trail Mark erstellen.</p></div>
+            <div class="collection-step"><b>3</b><p><strong>Sammeln</strong><br>Den Trail Mark am Board anbringen. Mit jedem Abenteuer wächst deine Geschichte.</p></div>
+          </div>
+        </div>
+        <p class="collection-note">KI-generiertes Konzeptbild zur Veranschaulichung des Sammelsystems – das spätere Produkt kann davon abweichen.</p>
+      </section>
+      <section class="about-intro" aria-labelledby="about-moments-title">
+        <div><p class="about-kicker">Was wirklich zählt</p><h2 id="about-moments-title">Sammle keine Kilometer. Sammle Erinnerungen.</h2></div>
+        <div class="about-copy">
+          <p>Nicht jede Tour muss länger, höher oder schneller sein als die vorherige. Manche Erinnerungen entstehen auf einem anspruchsvollen Wettkampf, andere bei einer spontanen Wanderung oder dem ersten gemeinsamen Gipfel.</p>
+          <p>Bei MONTMORY entscheidet nicht die Leistung über den Wert eines Trail Marks, sondern die Bedeutung des Erlebnisses. Deine Sammlung erzählt nicht nur, wo du warst – sondern was dir wichtig ist.</p>
         </div>
       </section>
       <section class="about-feature" aria-labelledby="about-workshop-title">
@@ -43,11 +86,11 @@
         <div class="about-feature-text">
           <p class="about-kicker">Mit Liebe zum Detail</p>
           <h2 id="about-workshop-title">Von der Tour zum Unikat.</h2>
-          <p>Vom Streckenverlauf bis zur Gravur zählt jedes Detail. MONTMORY verbindet die Begeisterung für Berge und Natur mit präziser Arbeit am Werkstück. Hier entsteht Schritt für Schritt ein Erinnerungsstück mit persönlicher Bedeutung.</p>
+          <p>Vom Streckenverlauf bis zur Gravur zählt jedes Detail. MONTMORY verbindet die Begeisterung für Berge und Natur mit präziser Arbeit am Werkstück. In unserer kleinen Werkstatt entwickeln wir Erinnerungsstücke aus Holz, die individuell gestaltet werden und gemeinsam eine persönliche Sammlung bilden.</p>
         </div>
       </section>
       <section class="about-quote" aria-label="MONTMORY Leitgedanke">
-        <blockquote>„Nicht jeder besondere Moment braucht viele Worte. Manchmal reicht ein einziger Weg.“</blockquote>
+        <blockquote>„Deine Wege. Deine Meilensteine. Deine Sammlung.“</blockquote>
         <p>From Mountains to Memories.</p>
       </section>
       <section class="about-cta" aria-labelledby="about-cta-title">
