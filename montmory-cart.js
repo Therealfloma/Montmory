@@ -52,6 +52,7 @@
   syncNewMarkButtons();
   function openCart(){
     previousFocus=document.activeElement;
+    showCartView('main');
     dialog.hidden=false;backdrop.hidden=false;document.body.classList.add('cart-dialog-open');
     render().catch(e=>setStatus('Übersicht nicht verfügbar: '+e.message));
     $('cartClose')?.focus();
@@ -74,6 +75,35 @@
       else if(!e.shiftKey&&document.activeElement===nodes.at(-1)){e.preventDefault();nodes[0].focus();}
     }
   });
+  function showCartView(view){
+    const names={main:'cartMainView',checkout:'cartDemoCheckout',success:'cartDemoSuccess'};
+    for(const [key,id] of Object.entries(names)){const el=$(id);if(el)el.hidden=key!==view;}
+    if(view==='main')$('cartTitle').firstChild.textContent='Dein Rucksack ';
+    if(view==='checkout')$('cartTitle').firstChild.textContent='Demo-Abschluss ';
+    if(view==='success')$('cartTitle').firstChild.textContent='Abschluss bestätigt ';
+  }
+  const euro=n=>n.toFixed(2).replace('.',',')+' €';
+  $('cartDemoStart')?.addEventListener('click',async()=>{
+    try{
+      const marks=await all();if(!marks.length)return;
+      const summary=$('cartDemoSummary');summary.replaceChildren();
+      addText(summary,'strong',`${marks.length} Trail Mark${marks.length===1?'':'s'}`);
+      for(const mark of marks)addText(summary,'div',`1 × ${mark.title||'Mein Trail Mark'}`);
+      addText(summary,'div',`Beispiel-Warenwert: ${euro(marks.length*14.9)} – ${euro(marks.length*19.9)}`);
+      addText(summary,'div','Versandkosten: noch nicht festgelegt');
+      addText(summary,'div','Beispiel-Lieferzeit nach Verkaufsstart: 7–14 Werktage');
+      $('cartDemoConsent').checked=false;$('cartDemoConfirm').disabled=true;
+      showCartView('checkout');dialog.scrollTop=0;
+    }catch(e){setStatus('Demo konnte nicht geöffnet werden: '+e.message);}
+  });
+  $('cartDemoConsent')?.addEventListener('change',()=>{$('cartDemoConfirm').disabled=!$('cartDemoConsent').checked;});
+  $('cartDemoBack')?.addEventListener('click',()=>showCartView('main'));
+  $('cartDemoConfirm')?.addEventListener('click',()=>{
+    if(!$('cartDemoConsent').checked)return;
+    // Absichtlich KEIN fetch, mailto, Zahlungsanbieter oder Order-Export.
+    showCartView('success');dialog.scrollTop=0;
+  });
+  $('cartDemoReturn')?.addEventListener('click',()=>{showCartView('main');render().catch(e=>setStatus(e.message));});
   function svgImage(svg){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);}
   function addText(el,tag,value){const child=document.createElement(tag);child.textContent=value;el.append(child);return child;}
   async function render(){
@@ -87,16 +117,16 @@
     $('cartEmpty').hidden=marks.length>0;
     $('cartNewMark').hidden=marks.length===0;
     $('cartTotals').hidden=marks.length===0;
+    if($('cartDemoStart'))$('cartDemoStart').disabled=marks.length===0;
     if(marks.length){
-      const euro=n=>n.toFixed(2).replace('.',',')+' €';
       const totals=$('cartTotals');totals.replaceChildren();
       addText(totals,'h4','Unverbindliche Preisübersicht');
       addText(totals,'p',`${marks.length} × Trail Mark · je 14,90–19,90 € (Beispielpreise)`);
-      const total=addText(totals,'p',`Warenwert: ${euro(marks.length*14.9)} bis ${euro(marks.length*19.9)}`);total.style.fontWeight='700';
+      const total=addText(totals,'p',`Beispiel-Warenwert: ${euro(marks.length*14.9)} bis ${euro(marks.length*19.9)}`);total.className='cart-total-value';
       addText(totals,'p','Versandkosten: noch nicht festgelegt');
       addText(totals,'p','Endpreis inklusive Versand: derzeit nicht berechenbar');
       addText(totals,'p','Mögliche Lieferzeit nach Verkaufsstart: 7–14 Werktage (unverbindliche Schätzung)');
-      addText(totals,'p','MONTMORY befindet sich in Entwicklung. Aktuell sind keine Bestellungen oder Zahlungen möglich.');
+      addText(totals,'p','MONTMORY ist noch in Entwicklung. Der Demo-Abschluss löst keine Bestellung oder Zahlung aus.');
     }
     for(const mark of marks){
       const article=document.createElement('article');article.className='cart-item';

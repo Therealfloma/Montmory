@@ -56,6 +56,37 @@ body.cart-dialog-open{overflow:hidden}
 section.tour-card { display: none !important; }
 body:not(.montmory-production-mode) #lightburnTools { display: none !important; }
 </style>
+<style id="montmory-v118">
+/* V118: moderne Rucksack-Karten und Demo-Abschluss */
+#montmoryCart{border-radius:24px;background:#f8f7f2;border:1px solid #e4dfd4}
+#montmoryCart .cart-item{border:1px solid #e8e2d7;border-radius:18px;padding:clamp(16px,2.5vw,24px);box-shadow:0 5px 18px #2d3b3010;background:#fffefa}
+#montmoryCart .cart-item-header h4{font-size:1.18rem;line-height:1.35}
+#montmoryCart .cart-item-header span{font-size:.78rem;color:#68776c;background:#edf0e8;border-radius:99px;padding:6px 10px}
+#montmoryCart .cart-item-images{grid-template-columns:repeat(2,minmax(0,1fr));max-width:460px}
+#montmoryCart .cart-item-images figure{background:#f5f3ed;padding:8px;border-radius:12px}
+#montmoryCart .cart-item-images img{max-height:175px;background:transparent}
+#montmoryCart .cart-item-images figcaption{text-align:center;font-size:.78rem;color:#657168}
+#montmoryCart .cart-item-price{font-weight:500;color:#657168;font-size:.86rem}
+#cartTotals{background:#edf0e9;border:1px solid #dfe5da;border-radius:17px;padding:20px}
+#cartTotals h4{margin:0 0 10px;color:#294a3c}
+#cartTotals p{margin:7px 0;font-size:.93rem}
+#cartTotals .cart-total-value{font-weight:700;font-size:1.12rem;color:#294a3c;border-top:1px solid #d2d9ce;padding-top:12px;margin-top:12px}
+.cart-demo-note{background:#fff7e8;border:1px solid #e9d6b5;border-radius:12px;padding:13px 15px;color:#685439;line-height:1.55;font-size:.88rem}
+.cart-demo-cta{width:100%;margin:12px 0 16px;min-height:48px;background:#294a3c;color:white;border:0;border-radius:12px;font-weight:700;cursor:pointer}
+.cart-demo-cta:disabled{opacity:.45;cursor:not-allowed}
+.cart-demo-cta:hover:not(:disabled){background:#1c372b}
+#cartDemoCheckout[hidden],#cartDemoSuccess[hidden],#cartMainView[hidden]{display:none!important}
+.cart-demo-panel{display:grid;gap:14px}
+.cart-demo-panel h4{margin:4px 0;font-size:1.25rem}
+.cart-demo-panel p{line-height:1.6;margin:0}
+.cart-demo-panel label{display:flex;align-items:flex-start;gap:10px;line-height:1.5;font-size:.92rem}
+.cart-demo-panel input[type=checkbox]{margin-top:4px;accent-color:#294a3c;width:18px;height:18px;flex-shrink:0}
+.cart-demo-panel .cart-demo-actions{display:flex;gap:10px;flex-wrap:wrap}
+.cart-demo-panel .cart-demo-actions button{flex:1 1 160px}
+.cart-demo-summary{padding:16px;border-radius:14px;background:#edf0e9;line-height:1.7}
+.cart-demo-success-icon{font-size:2.3rem;color:#294a3c}
+@media(max-width:600px){#montmoryCart{border-radius:16px}#montmoryCart .cart-item-images img{max-height:125px}}
+</style>
 </head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
@@ -66,11 +97,28 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   <div id="cartBackdrop" class="cart-backdrop" hidden></div>
             <section class="montmory-cart" id="montmoryCart" aria-labelledby="cartTitle" role="dialog" aria-modal="true" tabindex="-1" hidden>
               <div class="montmory-cart-head"><h3 id="cartTitle">Dein Rucksack <span id="cartCount">(0)</span></h3><button type="button" id="cartClose" class="review-cancel" aria-label="Rucksack schließen">✕ Schließen</button></div>
+              <div id="cartMainView">
               <p id="cartEmpty">Noch keine Trail Marks gespeichert. Erstelle zunächst eine unverbindliche Übersicht.</p>
               <div id="cartItems" class="cart-items"></div>
               <div id="cartTotals" class="cart-totals" hidden></div>
               <button type="button" id="cartNewMark" class="primary-button" hidden>+ Weiteren Trail Mark gestalten</button>
-              <p class="muted">Gespeichert nur in diesem Browser. Keine Bestellung, keine Zahlung. Beispielpreise und Lieferzeiten sind unverbindlich. Der Warenkorb wird nicht an MONTMORY übertragen.</p>
+              <p class="cart-demo-note"><strong>Entwicklungsphase:</strong> Alle Preise und Lieferzeiten sind Beispiele. Ein Demo-Abschluss ist möglich, aber keine echte Bestellung, Verarbeitung oder Zahlung.</p>
+              <button type="button" id="cartDemoStart" class="cart-demo-cta" disabled>Demo-Bestellung abschließen</button>
+              </div>
+              <div id="cartDemoCheckout" class="cart-demo-panel" hidden>
+                <h4>Dein Demo-Bestellabschluss</h4>
+                <p>Prüfe deine Zusammenfassung. Dies ist ausschließlich ein Funktionstest – es werden keine Kundendaten benötigt oder übertragen.</p>
+                <div id="cartDemoSummary" class="cart-demo-summary"></div>
+                <p class="cart-demo-note"><strong>Wichtig:</strong> MONTMORY befindet sich in der Entwicklung. Diese Demo-Bestellung wird nicht an MONTMORY gesendet, nicht bearbeitet und nicht produziert. Es entsteht kein Kaufvertrag und keine Zahlungspflicht.</p>
+                <label><input id="cartDemoConsent" type="checkbox"> Ich habe verstanden, dass dies nur eine Simulation ist und keine echte Bestellung ausgelöst wird.</label>
+                <div class="cart-demo-actions"><button type="button" id="cartDemoBack" class="review-cancel">Zurück zum Rucksack</button><button type="button" id="cartDemoConfirm" class="cart-demo-cta" disabled>Demo-Abschluss bestätigen</button></div>
+              </div>
+              <div id="cartDemoSuccess" class="cart-demo-panel" hidden>
+                <div class="cart-demo-success-icon" aria-hidden="true">✓</div><h4>Demo erfolgreich abgeschlossen</h4>
+                <p>Du hast den Bestellablauf getestet. <strong>Es wurde keine Bestellung übermittelt oder angenommen.</strong> Es erfolgt keine Herstellung und keine Zahlung.</p>
+                <p>Deine Trail Marks bleiben im Rucksack gespeichert und können weiterbearbeitet werden.</p>
+                <button type="button" id="cartDemoReturn" class="cart-demo-cta">Zurück zum Rucksack</button>
+              </div>
               <p id="cartStatus" role="status" aria-live="polite"></p>
             </section>
   <header class="brand-header">
@@ -344,7 +392,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=116"></script>
+  <script src="./montmory-cart.js?v=118"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>
