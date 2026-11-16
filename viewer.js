@@ -1046,15 +1046,13 @@
         ctx,
         engravingState.date || '–',
         FRONT_LAYOUT.date.x,
-        hasDestination ? 1008 : FRONT_LAYOUT.date.y,
-        hasDestination ? 49 : FRONT_LAYOUT.date.fontSize,
+        FRONT_LAYOUT.date.y,
+        FRONT_LAYOUT.date.fontSize,
         FRONT_LAYOUT.date.maxWidth,
-        hasDestination ? 32 : FRONT_LAYOUT.date.minFontSize,
+        FRONT_LAYOUT.date.minFontSize,
         '500'
       );
-      if (hasDestination) fitText(
-        ctx, destination, 512, 1072, 39, 660, 25, '500'
-      );
+
 
       if (showZones) {
         drawZoneGuides(ctx, 'VORDERSEITE', [
@@ -1344,6 +1342,18 @@
           ctx.strokeStyle='#151515';
           routePoints.forEach((p,i)=>i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y));
           ctx.stroke();
+          const destination = String(engravingState.destination || '').trim().slice(0,30);
+          if (engravingState.destinationEnabled && destination) {
+            const end=routePoints[routePoints.length-1];
+            ctx.fillStyle='#151515';
+            ctx.beginPath(); ctx.arc(end.x,end.y,11,0,Math.PI*2); ctx.fill();
+            ctx.font='500 32px Arial, sans-serif';
+            const textWidth=ctx.measureText(destination).width;
+            const labelX=Math.max(70,Math.min(954-textWidth,end.x+20));
+            const labelY=Math.max(y+32,Math.min(y+height-12,end.y-19));
+            ctx.textAlign='left'; ctx.textBaseline='middle';
+            ctx.fillText(destination,labelX,labelY);
+          }
         }
         ctx.restore();
         return;

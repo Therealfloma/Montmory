@@ -75,7 +75,17 @@
     ) || [];
     if(coords.length<2)return "";
     const path=makeFineRibbon(coords,0.18);
-    return `<path id="route-fein-018mm" d="${path}" fill="#0000ff" stroke="none"/>`;
+    const destination=window.MontmoryDestination?.get() || '';
+    let label='';
+    if(destination) {
+      const end=coords[coords.length-1];
+      const fontSize=32;
+      const approxWidth=Math.min(620,destination.length*fontSize*0.57);
+      const lx=Math.max(70,Math.min(954-approxWidth,end.x+20));
+      const ly=Math.max(box.y+32,Math.min(box.y+box.height-12,end.y-19));
+      label=`<g id="zielort-am-streckenende"><circle cx="${num(end.x)}" cy="${num(end.y)}" r="11" fill="black"/><text x="${num(lx)}" y="${num(ly)}" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="${fontSize}" font-weight="500" fill="black">${esc(destination)}</text></g>`;
+    }
+    return `<path id="route-fein-018mm" d="${path}" fill="#0000ff" stroke="none"/>${label}`;
   }
   function elevationSvg(points, box) {
     const axis = window.MontmoryElevationAxis?.get(points);
@@ -191,8 +201,7 @@ ${$("includeOuterContour")?.checked ? `<g id="Aussenkontur_60x80mm" transform="s
         if(show("front","gain")) parts.push(`<g id="hoehenmeter">${txt($("previewGain")?.textContent,f.gain)}</g>`);
         if(show("front","duration")) parts.push(`<g id="dauer">${txt($("previewDuration")?.textContent,f.duration)}</g>`);
         const destination=window.MontmoryDestination?.get() || '';
-        if(show("front","date")) parts.push(`<g id="datum">${txt($("previewDate")?.textContent,destination ? {...f.date,y:1008,fontSize:49,minFontSize:32} : f.date)}</g>`);
-        if(destination) parts.push(`<g id="zielort">${txt(destination,{x:512,y:1072,fontSize:39,minFontSize:25,maxWidth:660})}</g>`);
+        if(show("front","date")) parts.push(`<g id="datum">${txt($("previewDate")?.textContent,f.date)}</g>`);
       } else {
         if(show("back","title")) if(shown("title")) parts.push(`<g id="titel">${txt(title,b.title)}</g>`);
         const d=profilePath(back,b.profile?.x ?? 150,b.profile?.y ?? 345,b.profile?.width ?? 724,b.profile?.height ?? 270);
