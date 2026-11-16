@@ -539,6 +539,8 @@
         ...newState
       };
       updateEngravingTexture();
+      // Zielort kann auf der Rueckseite an der Route liegen.
+      updateBackTexture();
     };
 
     window.update3DBackEngraving = function (newState) {
@@ -1347,10 +1349,10 @@
             const end=routePoints[routePoints.length-1];
             ctx.fillStyle='#151515';
             ctx.beginPath(); ctx.arc(end.x,end.y,11,0,Math.PI*2); ctx.fill();
-            ctx.font='500 32px Arial, sans-serif';
+            ctx.font='600 40px Arial, sans-serif';
             const textWidth=ctx.measureText(destination).width;
-            const labelX=Math.max(70,Math.min(954-textWidth,end.x+20));
-            const labelY=Math.max(y+32,Math.min(y+height-12,end.y-19));
+            const labelX=Math.max(x+8,Math.min(x+width-textWidth-8,end.x+22));
+            const labelY=Math.max(y+28,Math.min(y+height-22,end.y-25));
             ctx.textAlign='left'; ctx.textBaseline='middle';
             ctx.fillText(destination,labelX,labelY);
           }
