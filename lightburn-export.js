@@ -89,8 +89,16 @@
       const corners=[{x:left,y:top},{x:right,y:top},{x:right,y:bottom},{x:left,y:bottom}];
       return corners.some((c,i)=>intersect(a,b,c,corners[(i+1)%4]));
     }
-    for(const fontSize of [40,36,32,28,24,20]) {
-      const width=measure(fontSize), height=fontSize*1.22;
+    const words=label.trim().split(/\s+/);
+    const layouts=[
+      ...[40,36,32,28].map(fontSize=>({fontSize,lines:[label]})),
+      ...(words.length===2 ? [40,36,32,28,24,20].map(fontSize=>({fontSize,lines:words})) : []),
+      ...[24,20].map(fontSize=>({fontSize,lines:[label]}))
+    ];
+    for(const {fontSize,lines} of layouts) {
+      const lineHeight=fontSize*1.3;
+      const width=Math.max(...lines.map(line=>measure(fontSize,line)));
+      const height=fontSize*1.22+(lines.length-1)*lineHeight;
       if(width>box.width-24)continue;
       const offsets=[
         [22,-height-20],[-width-22,-height-20],
@@ -108,7 +116,7 @@
         .filter(r=>!points.slice(1).some((pt,i)=>segmentHitsRect(points[i],pt,r)))
         .sort((a,b)=>Math.hypot(a.left+width/2-end.x,a.top+height/2-end.y)-
                      Math.hypot(b.left+width/2-end.x,b.top+height/2-end.y));
-      if(good.length)return {x:good[0].left,y:good[0].top+height/2,fontSize};
+      if(good.length)return {x:good[0].left,y:good[0].top+fontSize*0.61,fontSize,lineHeight,lines};
     }
     return null; // Keine sichere Position: keine ueberlappende Gravur erzeugen.
   }
@@ -125,9 +133,10 @@
     if(destination) {
       const end=coords[coords.length-1];
       const position=placeRouteDestination(coords,box,destination,
-        fontSize=>destination.length*fontSize*0.61);
+        (fontSize,line)=>line.length*fontSize*0.61);
       if(position) {
-        label=`<g id="zielort-am-streckenende"><circle cx="${num(end.x)}" cy="${num(end.y)}" r="11" fill="black"/><text x="${num(position.x)}" y="${num(position.y)}" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="${position.fontSize}" font-weight="600" fill="black">${esc(destination)}</text></g>`;
+        const lines=position.lines.map((line,i)=>`<text x="${num(position.x)}" y="${num(position.y+i*position.lineHeight)}" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="${position.fontSize}" font-weight="600" fill="black">${esc(line)}</text>`).join('');
+        label=`<g id="zielort-am-streckenende"><circle cx="${num(end.x)}" cy="${num(end.y)}" r="11" fill="black"/>${lines}</g>`;
       }
 
     }
