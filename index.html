@@ -50,7 +50,13 @@
 #montmoryPackShortcut{z-index:10000}
 body.cart-dialog-open{overflow:hidden}
 @media(max-width:600px){#montmoryCart{inset:8px 8px max(8px,env(safe-area-inset-bottom));max-height:none;border-radius:16px} .cart-item-images{grid-template-columns:repeat(2,minmax(0,1fr))}}
-</style></head>
+</style>
+<style id="montmory-v117-customer-cleanup">
+/* Daten bleiben für GPX-/Gravur-Logik im DOM, sind aber nicht Teil des Kundenablaufs. */
+section.tour-card { display: none !important; }
+body:not(.montmory-production-mode) #lightburnTools { display: none !important; }
+</style>
+</head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5V4a4 4 0 0 1 8 0v1"/><rect x="5" y="5" width="14" height="17" rx="4"/><path d="M5 11H3v7h2M19 11h2v7h-2M9 5v4m6-4v4"/><rect x="8" y="13" width="8" height="6" rx="1.5"/></svg>
@@ -146,7 +152,7 @@ body.cart-dialog-open{overflow:hidden}
           </div>
         </section>
 
-        <section class="card tour-card" data-wizard-step="2">
+        <section class="card tour-card" data-wizard-step="2" aria-hidden="true">
           <div class="card-content full-width">
             <div class="tour-head"><span>TOURDATEN</span><b>LIVE</b></div>
             <h2 id="previewTitle">Meine Tour</h2>
@@ -348,7 +354,11 @@ body.cart-dialog-open{overflow:hidden}
   <script src="./v99-destination.js?v=101"></script>
 <script>
   // Nur eine Bedienansicht: Produktionsmodus ist kein Passwortschutz.
-  if (new URLSearchParams(location.search).get("production") !== "1") {
+  if (new URLSearchParams(location.search).get("production") === "1") {
+    document.body.classList.add("montmory-production-mode");
+    const tools = document.getElementById("lightburnTools");
+    if (tools) tools.hidden = false;
+  } else {
     const tools = document.getElementById("lightburnTools");
     if (tools) tools.hidden = true;
   }
