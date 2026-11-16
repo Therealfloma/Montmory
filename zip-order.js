@@ -27,8 +27,11 @@ async function download(review){
  const number=review.orderNumber;
  const manifest={bestellnummer:number,erstellt:new Date().toISOString(),tour:document.getElementById('titleInput')?.value||'',
    strecke_km:document.getElementById('distanceInput')?.value||'',hoehenmeter:document.getElementById('gainInput')?.value||'',
-   zielort_anzeigen:!!document.getElementById('destinationEnabled')?.checked,zielort:window.MontmoryDestination?.get()||'',
-   widmung:window.MontmoryGift?.text()||'',kunde:{name:document.getElementById('customerName')?.value.trim()||'',email:document.getElementById('customerEmail')?.value.trim()||'',nachricht:document.getElementById('customerNote')?.value.trim()||''},gpx_dateiname:gp.name,gravurpruefung:review.warnings,
+   widmung:window.MontmoryGift?.text()||'',kunde:{name:document.getElementById('customerName')?.value.trim()||'',email:document.getElementById('customerEmail')?.value.trim()||'',nachricht:document.getElementById('customerNote')?.value.trim()||'',
+     lieferadresse:{strasse_hausnummer:document.getElementById('shippingStreet')?.value.trim()||'',
+       postleitzahl:document.getElementById('shippingPostal')?.value.trim()||'',
+       ort:document.getElementById('shippingCity')?.value.trim()||'',
+       land:document.getElementById('shippingCountry')?.value.trim()||''}},gpx_dateiname:gp.name,gravurpruefung:review.warnings,
    hinweis:'Bitte SVG-Dateien in LightBurn vor der Fertigung kontrollieren.'};
  const files=[{name:`${number}_${review.front.filename}`,data:review.front.svg},
  {name:`${number}_${review.back.filename}`,data:review.back.svg},

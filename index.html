@@ -6,6 +6,13 @@
   <meta name="description" content="MONTMORY Trail Mark GPX-Konfigurator">
   <title>MONTMORY – Dein Trail Mark</title>
   <link rel="stylesheet" href="./style.css?v=89">
+<style>
+.shipping-address{margin:18px 0;padding:18px;border:1px solid #d9d4c8;border-radius:14px}
+.shipping-address h3{margin:0 0 14px;font-size:1.1rem}
+.shipping-address-row{display:grid;grid-template-columns:minmax(110px,1fr) minmax(170px,2fr);gap:12px}
+.shipping-address small{display:block;margin-top:9px;color:#66736d}
+@media(max-width:540px){.shipping-address-row{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
   <header class="brand-header">
@@ -112,6 +119,16 @@
             <div class="customer-fields">
               <label class="field"><span>Dein Name *</span><input id="customerName" type="text" autocomplete="name" maxlength="100" required placeholder="Vor- und Nachname"></label>
               <label class="field"><span>Deine E-Mail-Adresse *</span><input id="customerEmail" type="email" autocomplete="email" maxlength="150" required placeholder="name@beispiel.de"></label>
+              <div class="shipping-address" aria-label="Lieferadresse">
+                <h3>Lieferadresse</h3>
+                <label class="field"><span>Straße und Hausnummer *</span><input id="shippingStreet" type="text" autocomplete="shipping street-address" maxlength="160" required placeholder="Musterstraße 12"></label>
+                <div class="shipping-address-row">
+                  <label class="field"><span>Postleitzahl *</span><input id="shippingPostal" type="text" autocomplete="shipping postal-code" maxlength="20" required placeholder="12345"></label>
+                  <label class="field"><span>Ort *</span><input id="shippingCity" type="text" autocomplete="shipping address-level2" maxlength="100" required placeholder="Musterstadt"></label>
+                </div>
+                <label class="field"><span>Land *</span><input id="shippingCountry" type="text" autocomplete="shipping country-name" maxlength="80" required value="Deutschland"></label>
+                <small>Diese Angaben werden für den Versand deines Trail Marks benötigt.</small>
+              </div>
               <label class="field"><span>Nachricht (optional)</span><textarea id="customerNote" rows="2" maxlength="500" placeholder="Weitere Wünsche zur Bestellung"></textarea></label>
             </div>
             <p class="muted">Prüfe deine beiden Gravurseiten. Danach wird eine ZIP-Bestelldatei heruntergeladen und dein E-Mail-Programm vorbereitet.</p>
@@ -261,8 +278,8 @@
   <script src="./viewer.js?v=103"></script>
   <script src="./app.js?v=89"></script>
   <script src="./lightburn-export.js?v=103"></script>
-  <script src="./zip-order.js?v=89"></script>
-  <script src="./order-review.js?v=91"></script>
+  <script src="./zip-order.js?v=106"></script>
+  <script src="./order-review.js?v=106"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>
