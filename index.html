@@ -24,8 +24,21 @@
 .cart-item-images img{width:100%;max-height:180px;object-fit:contain;background:#f1efe9;border-radius:8px}
 .cart-item-actions{display:flex;gap:10px;flex-wrap:wrap}.cart-item-actions button{cursor:pointer}
 .cart-totals{margin:14px 0;padding:14px;border-radius:10px;background:#eaece4}
+
+/* MONTMORY V112: stets erreichbarer Trail-Mark-Rucksack */
+.montmory-pack-shortcut{position:fixed;top:16px;right:18px;z-index:9999;display:flex;align-items:center;justify-content:center;width:58px;height:58px;padding:0;border:1px solid #c9bda6;border-radius:17px;background:#f9f5e9;color:#294a3c;box-shadow:0 5px 20px #172a2133;cursor:pointer;transition:transform .15s,background .15s}
+.montmory-pack-shortcut:hover,.montmory-pack-shortcut:focus-visible{background:#efe5d1;transform:translateY(-2px)}
+.montmory-pack-shortcut svg{width:31px;height:31px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.montmory-pack-count{position:absolute;top:-8px;right:-8px;display:grid;place-items:center;min-width:25px;height:25px;padding:0 5px;border-radius:99px;background:#294a3c;color:white;border:2px solid #f9f5e9;font:700 12px/1 Arial,sans-serif}
+@media(max-width:600px){.montmory-pack-shortcut{top:12px;right:12px;width:51px;height:51px}.montmory-pack-shortcut svg{width:28px;height:28px}}
+#montmoryCart{scroll-margin-top:88px}
 </style></head>
 <body>
+  <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5V4a4 4 0 0 1 8 0v1"/><rect x="5" y="5" width="14" height="17" rx="4"/><path d="M5 11H3v7h2M19 11h2v7h-2M9 5v4m6-4v4"/><rect x="8" y="13" width="8" height="6" rx="1.5"/></svg>
+    <span id="montmoryPackCount" class="montmory-pack-count" aria-hidden="true">0</span>
+  </button>
+
   <header class="brand-header">
     <div class="brand-inner">
       <a href="./index.html" class="brand-home" aria-label="MONTMORY Startseite"><img src="./montmory-logo.png" alt="MONTMORY – From Mountains to Memories" class="company-logo"></a>
@@ -302,7 +315,7 @@
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=111"></script>
+  <script src="./montmory-cart.js?v=112"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>

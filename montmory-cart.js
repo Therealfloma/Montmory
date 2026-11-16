@@ -29,6 +29,10 @@
   async function render(){
     const marks=(await all()).sort((a,b)=>a.created-b.created),list=$('cartItems');list.replaceChildren();
     $('cartCount').textContent=`(${marks.length})`;
+    const packCount=$('montmoryPackCount'),packButton=$('montmoryPackShortcut');
+    if(packCount)packCount.textContent=marks.length>99?'99+':String(marks.length);
+    if(packButton)packButton.setAttribute('aria-label',`Rucksack öffnen: ${marks.length} Trail Mark${marks.length===1?'':'s'} gespeichert`);
+
     $('cartEmpty').hidden=marks.length>0;
     $('cartNewMark').hidden=marks.length===0;
     $('cartTotals').hidden=marks.length===0;
@@ -102,6 +106,17 @@
     document.querySelector('#konfigurator')?.scrollIntoView({behavior:'smooth',block:'start'});
     setStatus('Trail Mark geladen. Änderungen vornehmen und erneut im Warenkorb speichern.');
   }
+  $('montmoryPackShortcut')?.addEventListener('click',()=>{
+    const step3=document.querySelector('[data-wizard-go="3"]');
+    // Den bestehenden Assistenten benutzen, damit der Warenkorb auch aus Schritt 1/2 sichtbar ist.
+    if(step3)step3.click();
+    const target=$('montmoryCart');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      target?.scrollIntoView({behavior:'smooth',block:'start'});
+      target?.setAttribute('tabindex','-1');
+      target?.focus({preventScroll:true});
+    }));
+  });
   $('addMarkToCart')?.addEventListener('click',async()=>{
     const button=$('addMarkToCart');button.disabled=true;
     try{
