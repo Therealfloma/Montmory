@@ -90,11 +90,12 @@
       return corners.some((c,i)=>intersect(a,b,c,corners[(i+1)%4]));
     }
     const words=label.trim().split(/\s+/);
-    const layouts=[
-      ...[40,36,32,28].map(fontSize=>({fontSize,lines:[label]})),
-      ...(words.length===2 ? [40,36,32,28,24,20].map(fontSize=>({fontSize,lines:words})) : []),
-      ...[24,20].map(fontSize=>({fontSize,lines:[label]}))
-    ];
+    // Two words: try one line at full size, then two lines before shrinking.
+    const layouts=words.length===2 ? [
+      {fontSize:40,lines:[label]},
+      ...[40,36,32,28,24,20].map(fontSize=>({fontSize,lines:words})),
+      ...[36,32,28,24,20].map(fontSize=>({fontSize,lines:[label]}))
+    ] : [40,36,32,28,24,20].map(fontSize=>({fontSize,lines:[label]}));
     for(const {fontSize,lines} of layouts) {
       const lineHeight=fontSize*1.3;
       const width=Math.max(...lines.map(line=>measure(fontSize,line)));
