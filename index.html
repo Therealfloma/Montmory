@@ -13,7 +13,7 @@
 .shipping-address small{display:block;margin-top:9px;color:#66736d}
 @media(max-width:540px){.shipping-address-row{grid-template-columns:1fr}}
 </style>
-</head>
+<style>.customer-fields[hidden]{display:none!important}.order-cost-preview{margin:20px 0;padding:20px;border:1px solid #d5d9cf;border-radius:14px;background:#f7f6ef}.order-cost-preview h4{margin:0 0 14px;font-size:1.08rem}.order-cost-preview p{margin:9px 0;line-height:1.55}.order-cost-preview .muted{margin-top:18px}</style></head>
 <body>
   <header class="brand-header">
     <div class="brand-inner">
@@ -114,9 +114,9 @@
         <section class="card send-config-panel" data-wizard-step="3">
           <div class="step">3</div>
           <div class="card-content">
-            <h2>Deine Bestellung</h2>
-            <p class="send-intro">Fast geschafft! Gib deine Kontaktdaten ein und prüfe anschließend deine Gravur.</p>
-            <div class="customer-fields">
+            <h2>Deine Bestellübersicht</h2>
+            <p class="send-intro">Sieh dir deine Gestaltung, die unverbindlichen Beispielpreise und die geplante Lieferzeit an. <strong>MONTMORY befindet sich noch in der Entwicklung – Bestellungen sind derzeit nicht möglich.</strong></p>
+            <div class="customer-fields" hidden>
               <label class="field"><span>Dein Name *</span><input id="customerName" type="text" autocomplete="name" maxlength="100" required placeholder="Vor- und Nachname"></label>
               <label class="field"><span>Deine E-Mail-Adresse *</span><input id="customerEmail" type="email" autocomplete="email" maxlength="150" required placeholder="name@beispiel.de"></label>
               <div class="shipping-address" aria-label="Lieferadresse">
@@ -131,20 +131,21 @@
               </div>
               <label class="field"><span>Nachricht (optional)</span><textarea id="customerNote" rows="2" maxlength="500" placeholder="Weitere Wünsche zur Bestellung"></textarea></label>
             </div>
-            <p class="muted">Prüfe deine beiden Gravurseiten. Danach wird eine ZIP-Bestelldatei heruntergeladen und dein E-Mail-Programm vorbereitet.</p>
-            <button id="sendConfiguration" type="button" class="primary-button">Bestellung prüfen <span aria-hidden="true">→</span></button>
-            <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Lade deine Tour und gib deine Kontaktdaten ein.</div>
+            <p class="muted">Diese Übersicht ist eine unverbindliche Vorschau. Es werden keine Bestellungen angenommen und keine Zahlungen ausgelöst.</p>
+            <button id="sendConfiguration" type="button" class="primary-button">Unverbindliche Übersicht anzeigen <span aria-hidden="true">→</span></button>
+            <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Lade deine Tour hoch, um deine unverbindliche Übersicht zu sehen.</div>
             <div class="whatsapp-order"><span>Du bist dir noch unsicher?</span><a id="whatsappOrder" class="whatsapp-link" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer">Frage zu meiner Bestellung per WhatsApp ↗</a><p class="muted whatsapp-hint">WhatsApp dient nur zur Beratung – es wird keine Bestellung versendet.</p></div>
             <a id="openEmailDraft" href="#" hidden>E-Mail-Entwurf erneut öffnen</a>
             <div id="orderReview" class="order-review" hidden>
-              <h3>Vorder- und Rückseite prüfen</h3>
-              <p id="orderNumberDisplay" class="order-number"></p><div id="customerSummary" class="customer-summary"></div>
+              <h3>Dein Trail Mark auf einen Blick</h3>
+              <div id="customerSummary" class="customer-summary"></div>
+              <div class="order-cost-preview"><h4>Preis und Lieferzeit – unverbindliche Beispiele</h4><p><strong>Trail Mark (1 Stück):</strong> ca. 14,90–19,90 €</p><p><strong>Versandkosten:</strong> noch nicht festgelegt</p><p><strong>Gesamtpreis:</strong> noch nicht verbindlich berechenbar</p><p><strong>Mögliche Lieferzeit nach künftigem Verkaufsstart:</strong> etwa 7–14 Werktage (unverbindliche Planungsgröße)</p><p class="muted"><strong>Hinweis:</strong> Das Produkt ist noch in Entwicklung. Alle Preise und Lieferzeiten sind Beispiele. Aktuell sind weder Bestellungen noch Zahlungen möglich.</p></div>
               <div id="engravingCheck" class="engraving-check" role="status" aria-live="polite"></div>
               <div class="order-preview-grid">
                 <figure><figcaption>Vorderseite</figcaption><img id="orderPreviewFront" alt="SVG-Gravur Vorderseite"></figure>
                 <figure><figcaption>Rückseite</figcaption><img id="orderPreviewBack" alt="SVG-Gravur Rückseite"></figure>
               </div>
-              <p class="muted"><strong>Wichtig:</strong> Nach dem Bestätigen wird eine ZIP-Datei mit beiden SVG-Dateien, der GPX-Datei und den Bestelldaten heruntergeladen. Bitte füge diese ZIP-Datei manuell als Anhang hinzu und klicke in deiner E-Mail-App auf Senden. Erst dann ist deine Bestellanfrage übermittelt.</p>
+              <p class="muted"><strong>Keine Bestellung:</strong> Diese Ansicht dient ausschließlich zur Planung. Ein Kaufabschluss ist derzeit nicht möglich.</p>
               <button type="button" id="cancelOrderReview" class="review-cancel">Zurück zur Bearbeitung</button>
             </div>
           </div>
@@ -275,11 +276,11 @@
   <script src="./embedded-layout.js?v=58"></script>
   <script src="./elevation-axis.js?v=58"></script>
   <script src="./route-geometry.js?v=60"></script>
-  <script src="./viewer.js?v=103"></script>
+  <script src="./viewer.js?v=105"></script>
   <script src="./app.js?v=89"></script>
-  <script src="./lightburn-export.js?v=103"></script>
+  <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
-  <script src="./order-review.js?v=106"></script>
+  <script src="./order-review.js?v=109"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>
