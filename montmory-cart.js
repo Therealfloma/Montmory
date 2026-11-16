@@ -26,6 +26,26 @@
   const get=id=>transaction('readonly',s=>s.get(id));
   const dialog=$('montmoryCart'),backdrop=$('cartBackdrop'),pack=$('montmoryPackShortcut');
   let previousFocus=null;
+  let currentMarkSaved=false;
+  const newButtons=()=>[$('cartNewMark'),$('newMarkFromStep3')].filter(Boolean);
+  const hasActiveDraft=()=>Boolean(window.__montmoryGpxFile || $('gpxFile')?.files?.length);
+  function syncNewMarkButtons(){
+    for(const button of newButtons()){
+      button.disabled=hasActiveDraft()&&!currentMarkSaved;
+      button.title=button.disabled?'Bitte diesen Trail Mark zuerst im Rucksack speichern':'Weitere Gestaltung beginnen';
+      button.setAttribute('aria-disabled',String(button.disabled));
+    }
+    const hint=$('saveBeforeNewHint');if(hint)hint.hidden=currentMarkSaved||!hasActiveDraft();
+  }
+  function markUnsaved(){currentMarkSaved=false;syncNewMarkButtons();}
+  // Any adjustment to the current configuration requires saving again.
+  document.querySelector('#konfigurator')?.addEventListener('input',e=>{
+    if(e.target.closest('.settings-card,.upload-card,.tour-card'))markUnsaved();
+  });
+  document.querySelector('#konfigurator')?.addEventListener('change',e=>{
+    if(e.target.closest('.settings-card,.upload-card,.tour-card'))markUnsaved();
+  });
+  syncNewMarkButtons();
   function openCart(){
     previousFocus=document.activeElement;
     dialog.hidden=false;backdrop.hidden=false;document.body.classList.add('cart-dialog-open');
@@ -59,6 +79,7 @@
     if(packCount)packCount.textContent=marks.length>99?'99+':String(marks.length);
     if(packButton)packButton.setAttribute('aria-label',`Rucksack öffnen: ${marks.length} Trail Mark${marks.length===1?'':'s'} gespeichert`);
 
+    syncNewMarkButtons();
     $('cartEmpty').hidden=marks.length>0;
     $('cartNewMark').hidden=marks.length===0;
     $('cartTotals').hidden=marks.length===0;
@@ -88,7 +109,7 @@
       article.append(imgs);
       const actions=document.createElement('div');actions.className='cart-item-actions';
       const remove=document.createElement('button');remove.type='button';remove.className='review-cancel';remove.textContent='Entfernen';
-      remove.addEventListener('click',async()=>{if(!confirm('Diesen Trail Mark aus dem Warenkorb entfernen?'))return;try{await del(mark.id);await render();setStatus('Trail Mark entfernt.');}catch(e){setStatus('Entfernen fehlgeschlagen: '+e.message);}});
+      remove.addEventListener('click',async()=>{if(!confirm('Diesen Trail Mark aus dem Warenkorb entfernen?'))return;try{await del(mark.id);if(currentMarkSaved)markUnsaved();await render();setStatus('Trail Mark entfernt.');}catch(e){setStatus('Entfernen fehlgeschlagen: '+e.message);}});
       const edit=document.createElement('button');edit.type='button';edit.className='primary-button';edit.textContent='Weiterbearbeiten';
       edit.addEventListener('click',async()=>{
         try{
@@ -138,7 +159,14 @@
       if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));}
     }
     $('orderReview')?.setAttribute('hidden','');
-    document.querySelector('#konfigurator')?.scrollIntoView({behavior:'smooth',block:'start'});
+    markUnsaved();
+    // Wizard controls are the single source of truth for step visibility.
+    const stepTwo=document.querySelector('[data-wizard-go="2"]');
+    if(!stepTwo)throw new Error('Schritt 2 ist nicht verfügbar.');
+    stepTwo.click();
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const settings=document.querySelector('.settings-card[data-wizard-step="2"]');
+    (settings||document.querySelector('#konfigurator'))?.scrollIntoView({behavior:'smooth',block:'start'});
     setStatus('Trail Mark geladen. Änderungen vornehmen und erneut im Warenkorb speichern.');
   }
   $('addMarkToCart')?.addEventListener('click',async()=>{
@@ -163,12 +191,19 @@
         title:$('titleInput')?.value?.trim()||'Meine Tour',km:$('previewDistance')?.textContent,
         hm:$('previewGain')?.textContent,date:$('previewDate')?.textContent,
         destination:window.MontmoryDestination?.get?.()||'',front:r.front.svg,back:r.back.svg};
-      await put(mark);sessionStorage.removeItem('montmory-cart-edit-id');await render();setStatus('Trail Mark gespeichert. Du kannst jetzt eine neue Konfiguration starten.');
+      await put(mark);sessionStorage.removeItem('montmory-cart-edit-id');currentMarkSaved=true;syncNewMarkButtons();await render();setStatus('Trail Mark gespeichert. Du kannst jetzt eine neue Konfiguration starten.');
       openCart();
     }catch(e){setStatus('Speichern fehlgeschlagen: '+e.message);}
     finally{button.disabled=false;}
   });
   function newMark(){
+    if(hasActiveDraft()&&!currentMarkSaved){
+      setStatus('Bitte speichere deinen aktuellen Trail Mark zuerst im Rucksack.');
+      closeCart();
+      document.querySelector('[data-wizard-go="3"]')?.click();
+      document.querySelector('.send-config-panel')?.scrollIntoView({behavior:'smooth',block:'start'});
+      return;
+    }
     // Neustart setzt alle alten GPX- und Formulardaten sicher zurück; IndexedDB-Warenkorb bleibt erhalten.
     sessionStorage.removeItem('montmory-cart-edit-id');window.location.href=window.location.pathname+'#konfigurator';window.location.reload();
   }
