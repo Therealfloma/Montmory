@@ -18,6 +18,7 @@
       shippingStreet:$('shippingStreet')?.value,shippingPostal:$('shippingPostal')?.value,shippingCity:$('shippingCity')?.value,shippingCountry:$('shippingCountry')?.value,customerName:$('customerName')?.value,customerEmail:$('customerEmail')?.value,customerNote:$('customerNote')?.value,
       layout:JSON.stringify(window.MONTMORY_LAYOUT?.layout)});
   }
+  window.MontmoryCartReview = () => review;
   function reset(){
     previewUrls.forEach(URL.revokeObjectURL);previewUrls=[];
     review=null;window.MontmoryV64 && (window.MontmoryV64.lastReview=null);panel.hidden=true;button.textContent='Unverbindliche Übersicht anzeigen →';

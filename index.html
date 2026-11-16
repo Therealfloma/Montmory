@@ -13,7 +13,18 @@
 .shipping-address small{display:block;margin-top:9px;color:#66736d}
 @media(max-width:540px){.shipping-address-row{grid-template-columns:1fr}}
 </style>
-<style>.customer-fields[hidden]{display:none!important}.order-cost-preview{margin:20px 0;padding:20px;border:1px solid #d5d9cf;border-radius:14px;background:#f7f6ef}.order-cost-preview h4{margin:0 0 14px;font-size:1.08rem}.order-cost-preview p{margin:9px 0;line-height:1.55}.order-cost-preview .muted{margin-top:18px}</style></head>
+<style>.customer-fields[hidden]{display:none!important}.order-cost-preview{margin:20px 0;padding:20px;border:1px solid #d5d9cf;border-radius:14px;background:#f7f6ef}.order-cost-preview h4{margin:0 0 14px;font-size:1.08rem}.order-cost-preview p{margin:9px 0;line-height:1.55}.order-cost-preview .muted{margin-top:18px}</style><style>
+.montmory-cart{margin:24px 0;padding:22px;border:1px solid #d8d7cd;border-radius:16px;background:#fbfaf6}
+.montmory-cart-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.montmory-cart-head h3{margin:0 0 10px}.montmory-cart-head span{color:#65736a;font-size:.9rem}
+.cart-items{display:grid;gap:14px}.cart-item{padding:15px;border:1px solid #ddd9cf;border-radius:12px;background:white}
+.cart-item-header{display:flex;justify-content:space-between;align-items:start;gap:10px;flex-wrap:wrap}
+.cart-item h4{margin:0 0 8px}.cart-item p{margin:4px 0;font-size:.94rem}
+.cart-item-images{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.cart-item-images img{width:100%;max-height:180px;object-fit:contain;background:#f1efe9;border-radius:8px}
+.cart-item-actions{display:flex;gap:10px;flex-wrap:wrap}.cart-item-actions button{cursor:pointer}
+.cart-totals{margin:14px 0;padding:14px;border-radius:10px;background:#eaece4}
+</style></head>
 <body>
   <header class="brand-header">
     <div class="brand-inner">
@@ -136,6 +147,15 @@
             <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Lade deine Tour hoch, um deine unverbindliche Übersicht zu sehen.</div>
             <div class="whatsapp-order"><span>Du bist dir noch unsicher?</span><a id="whatsappOrder" class="whatsapp-link" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer">Frage zu meiner Bestellung per WhatsApp ↗</a><p class="muted whatsapp-hint">WhatsApp dient nur zur Beratung – es wird keine Bestellung versendet.</p></div>
             <a id="openEmailDraft" href="#" hidden>E-Mail-Entwurf erneut öffnen</a>
+            <section class="montmory-cart" id="montmoryCart" aria-labelledby="cartTitle">
+              <div class="montmory-cart-head"><h3 id="cartTitle">Dein Warenkorb <span id="cartCount">(0)</span></h3><span>Unverbindliche Merkliste</span></div>
+              <p id="cartEmpty">Noch keine Trail Marks gespeichert. Erstelle zunächst eine unverbindliche Übersicht.</p>
+              <div id="cartItems" class="cart-items"></div>
+              <div id="cartTotals" class="cart-totals" hidden></div>
+              <button type="button" id="cartNewMark" class="review-cancel" hidden>+ Neuen Trail Mark konfigurieren</button>
+              <p class="muted">Gespeichert nur in diesem Browser. Keine Bestellung, keine Zahlung. Beispielpreise und Lieferzeiten sind unverbindlich. Der Warenkorb wird nicht an MONTMORY übertragen.</p>
+              <p id="cartStatus" role="status" aria-live="polite"></p>
+            </section>
             <div id="orderReview" class="order-review" hidden>
               <h3>Dein Trail Mark auf einen Blick</h3>
               <div id="customerSummary" class="customer-summary"></div>
@@ -146,6 +166,7 @@
                 <figure><figcaption>Rückseite</figcaption><img id="orderPreviewBack" alt="SVG-Gravur Rückseite"></figure>
               </div>
               <p class="muted"><strong>Keine Bestellung:</strong> Diese Ansicht dient ausschließlich zur Planung. Ein Kaufabschluss ist derzeit nicht möglich.</p>
+              <button type="button" id="addMarkToCart" class="primary-button">Trail Mark im Warenkorb speichern</button>
               <button type="button" id="cancelOrderReview" class="review-cancel">Zurück zur Bearbeitung</button>
             </div>
           </div>
@@ -280,7 +301,8 @@
   <script src="./app.js?v=89"></script>
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
-  <script src="./order-review.js?v=109"></script>
+  <script src="./order-review.js?v=110"></script>
+  <script src="./montmory-cart.js?v=110"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>
