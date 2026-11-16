@@ -1334,6 +1334,51 @@
         });
         ctx.setLineDash([]);
       }
+
+  // Labelposition in der Routenbox: Abstand zu ALLEN Liniensegmenten pruefen.
+  function placeRouteDestination(points, box, label, measure) {
+    if (!points || points.length < 2 || !label) return null;
+    const end=points[points.length-1], pad=12, clearance=13;
+    const inside=(r)=>r.left>=box.x+6 && r.right<=box.x+box.width-6 &&
+      r.top>=box.y+6 && r.bottom<=box.y+box.height-6;
+    function segmentHitsRect(a,b,r) {
+      const left=r.left-clearance,right=r.right+clearance,top=r.top-clearance,bottom=r.bottom+clearance;
+      if(Math.max(a.x,b.x)<left || Math.min(a.x,b.x)>right ||
+         Math.max(a.y,b.y)<top || Math.min(a.y,b.y)>bottom) return false;
+      if((a.x>=left&&a.x<=right&&a.y>=top&&a.y<=bottom) ||
+         (b.x>=left&&b.x<=right&&b.y>=top&&b.y<=bottom))return true;
+      const cross=(c,d,e)=>(d.x-c.x)*(e.y-c.y)-(d.y-c.y)*(e.x-c.x);
+      const intersect=(c,d,e,f)=>{
+        const u=cross(c,d,e),v=cross(c,d,f),w=cross(e,f,c),z=cross(e,f,d);
+        return ((u<=0&&v>=0)||(u>=0&&v<=0))&&((w<=0&&z>=0)||(w>=0&&z<=0));
+      };
+      const corners=[{x:left,y:top},{x:right,y:top},{x:right,y:bottom},{x:left,y:bottom}];
+      return corners.some((c,i)=>intersect(a,b,c,corners[(i+1)%4]));
+    }
+    for(const fontSize of [40,36,32,28,24,20]) {
+      const width=measure(fontSize), height=fontSize*1.22;
+      if(width>box.width-24)continue;
+      const offsets=[
+        [22,-height-20],[-width-22,-height-20],
+        [22,20],[-width-22,20],
+        [-width/2,-height-34],[-width/2,34],
+        [34,-height/2],[-width-34,-height/2]
+      ];
+      const candidates=offsets.map(([dx,dy])=>({left:end.x+dx,top:end.y+dy}));
+      // In engen Routen: freie Position in der Naehe des Zielpunkts suchen.
+      for(let yy=box.y+8; yy<=box.y+box.height-height-8;yy+=18)
+        for(let xx=box.x+8;xx<=box.x+box.width-width-8;xx+=18)
+          candidates.push({left:xx,top:yy});
+      const good=candidates.map(c=>({...c,right:c.left+width,bottom:c.top+height}))
+        .filter(inside)
+        .filter(r=>!points.slice(1).some((pt,i)=>segmentHitsRect(points[i],pt,r)))
+        .sort((a,b)=>Math.hypot(a.left+width/2-end.x,a.top+height/2-end.y)-
+                     Math.hypot(b.left+width/2-end.x,b.top+height/2-end.y));
+      if(good.length)return {x:good[0].left,y:good[0].top+height/2,fontSize};
+    }
+    return null; // Keine sichere Position: keine ueberlappende Gravur erzeugen.
+  }
+
       if (!showAxis && window.MontmoryRouteGeometry) {
         const routePoints=window.MontmoryRouteGeometry.fit(points,x,y,width,height,60,80);
         if(routePoints.length>=2) {
@@ -1349,12 +1394,13 @@
             const end=routePoints[routePoints.length-1];
             ctx.fillStyle='#151515';
             ctx.beginPath(); ctx.arc(end.x,end.y,11,0,Math.PI*2); ctx.fill();
-            ctx.font='600 40px Arial, sans-serif';
-            const textWidth=ctx.measureText(destination).width;
-            const labelX=Math.max(x+8,Math.min(x+width-textWidth-8,end.x+22));
-            const labelY=Math.max(y+28,Math.min(y+height-22,end.y-25));
-            ctx.textAlign='left'; ctx.textBaseline='middle';
-            ctx.fillText(destination,labelX,labelY);
+            const position=placeRouteDestination(routePoints,{x,y,width,height},destination,
+              fontSize=>{ctx.font=`600 ${fontSize}px Arial, sans-serif`;return ctx.measureText(destination).width;});
+            if(position) {
+              ctx.font=`600 ${position.fontSize}px Arial, sans-serif`;
+              ctx.textAlign='left';ctx.textBaseline='middle';
+              ctx.fillText(destination,position.x,position.y);
+            }
           }
         }
         ctx.restore();

@@ -68,6 +68,51 @@
     return coords.map((p,i)=>(i?"L":"M")+num(p.x/sx)+" "+num(p.y/sy)).join(" ")+" Z";
   }
   // Gleich breite Gravur wie beim Höhenprofil: echte 0,18-mm-Fläche.
+
+  // Labelposition in der Routenbox: Abstand zu ALLEN Liniensegmenten pruefen.
+  function placeRouteDestination(points, box, label, measure) {
+    if (!points || points.length < 2 || !label) return null;
+    const end=points[points.length-1], pad=12, clearance=13;
+    const inside=(r)=>r.left>=box.x+6 && r.right<=box.x+box.width-6 &&
+      r.top>=box.y+6 && r.bottom<=box.y+box.height-6;
+    function segmentHitsRect(a,b,r) {
+      const left=r.left-clearance,right=r.right+clearance,top=r.top-clearance,bottom=r.bottom+clearance;
+      if(Math.max(a.x,b.x)<left || Math.min(a.x,b.x)>right ||
+         Math.max(a.y,b.y)<top || Math.min(a.y,b.y)>bottom) return false;
+      if((a.x>=left&&a.x<=right&&a.y>=top&&a.y<=bottom) ||
+         (b.x>=left&&b.x<=right&&b.y>=top&&b.y<=bottom))return true;
+      const cross=(c,d,e)=>(d.x-c.x)*(e.y-c.y)-(d.y-c.y)*(e.x-c.x);
+      const intersect=(c,d,e,f)=>{
+        const u=cross(c,d,e),v=cross(c,d,f),w=cross(e,f,c),z=cross(e,f,d);
+        return ((u<=0&&v>=0)||(u>=0&&v<=0))&&((w<=0&&z>=0)||(w>=0&&z<=0));
+      };
+      const corners=[{x:left,y:top},{x:right,y:top},{x:right,y:bottom},{x:left,y:bottom}];
+      return corners.some((c,i)=>intersect(a,b,c,corners[(i+1)%4]));
+    }
+    for(const fontSize of [40,36,32,28,24,20]) {
+      const width=measure(fontSize), height=fontSize*1.22;
+      if(width>box.width-24)continue;
+      const offsets=[
+        [22,-height-20],[-width-22,-height-20],
+        [22,20],[-width-22,20],
+        [-width/2,-height-34],[-width/2,34],
+        [34,-height/2],[-width-34,-height/2]
+      ];
+      const candidates=offsets.map(([dx,dy])=>({left:end.x+dx,top:end.y+dy}));
+      // In engen Routen: freie Position in der Naehe des Zielpunkts suchen.
+      for(let yy=box.y+8; yy<=box.y+box.height-height-8;yy+=18)
+        for(let xx=box.x+8;xx<=box.x+box.width-width-8;xx+=18)
+          candidates.push({left:xx,top:yy});
+      const good=candidates.map(c=>({...c,right:c.left+width,bottom:c.top+height}))
+        .filter(inside)
+        .filter(r=>!points.slice(1).some((pt,i)=>segmentHitsRect(points[i],pt,r)))
+        .sort((a,b)=>Math.hypot(a.left+width/2-end.x,a.top+height/2-end.y)-
+                     Math.hypot(b.left+width/2-end.x,b.top+height/2-end.y));
+      if(good.length)return {x:good[0].left,y:good[0].top+height/2,fontSize};
+    }
+    return null; // Keine sichere Position: keine ueberlappende Gravur erzeugen.
+  }
+
   function routeSvg(points, box) {
     const coords=window.MontmoryRouteGeometry?.fit(
       points,box.x,box.y,box.width,box.height,
@@ -79,11 +124,12 @@
     let label='';
     if(destination) {
       const end=coords[coords.length-1];
-      const fontSize=32;
-      const approxWidth=Math.min(620,destination.length*fontSize*0.57);
-      const lx=Math.max(70,Math.min(954-approxWidth,end.x+20));
-      const ly=Math.max(box.y+32,Math.min(box.y+box.height-12,end.y-19));
-      label=`<g id="zielort-am-streckenende"><circle cx="${num(end.x)}" cy="${num(end.y)}" r="11" fill="black"/><text x="${num(lx)}" y="${num(ly)}" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="${fontSize}" font-weight="500" fill="black">${esc(destination)}</text></g>`;
+      const position=placeRouteDestination(coords,box,destination,
+        fontSize=>destination.length*fontSize*0.61);
+      if(position) {
+        label=`<g id="zielort-am-streckenende"><circle cx="${num(end.x)}" cy="${num(end.y)}" r="11" fill="black"/><text x="${num(position.x)}" y="${num(position.y)}" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="${position.fontSize}" font-weight="600" fill="black">${esc(destination)}</text></g>`;
+      }
+
     }
     return `<path id="route-fein-018mm" d="${path}" fill="#0000ff" stroke="none"/>${label}`;
   }
