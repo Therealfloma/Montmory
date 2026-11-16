@@ -1040,15 +1040,20 @@
         '500'
       );
 
+      const destination = String(engravingState.destination || '').trim().slice(0, 30);
+      const hasDestination = Boolean(engravingState.destinationEnabled && destination);
       if (isShown("front", "date")) fitText(
         ctx,
         engravingState.date || '–',
         FRONT_LAYOUT.date.x,
-        FRONT_LAYOUT.date.y,
-        FRONT_LAYOUT.date.fontSize,
+        hasDestination ? 1008 : FRONT_LAYOUT.date.y,
+        hasDestination ? 49 : FRONT_LAYOUT.date.fontSize,
         FRONT_LAYOUT.date.maxWidth,
-        FRONT_LAYOUT.date.minFontSize,
+        hasDestination ? 32 : FRONT_LAYOUT.date.minFontSize,
         '500'
+      );
+      if (hasDestination) fitText(
+        ctx, destination, 512, 1072, 39, 660, 25, '500'
       );
 
       if (showZones) {

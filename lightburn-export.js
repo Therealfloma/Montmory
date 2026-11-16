@@ -190,7 +190,9 @@ ${$("includeOuterContour")?.checked ? `<g id="Aussenkontur_60x80mm" transform="s
         if(show("front","distance")) parts.push(`<g id="strecke">${txt($("previewDistance")?.textContent,f.distance)}</g>`);
         if(show("front","gain")) parts.push(`<g id="hoehenmeter">${txt($("previewGain")?.textContent,f.gain)}</g>`);
         if(show("front","duration")) parts.push(`<g id="dauer">${txt($("previewDuration")?.textContent,f.duration)}</g>`);
-        if(show("front","date")) parts.push(`<g id="datum">${txt($("previewDate")?.textContent,f.date)}</g>`);
+        const destination=window.MontmoryDestination?.get() || '';
+        if(show("front","date")) parts.push(`<g id="datum">${txt($("previewDate")?.textContent,destination ? {...f.date,y:1008,fontSize:49,minFontSize:32} : f.date)}</g>`);
+        if(destination) parts.push(`<g id="zielort">${txt(destination,{x:512,y:1072,fontSize:39,minFontSize:25,maxWidth:660})}</g>`);
       } else {
         if(show("back","title")) if(shown("title")) parts.push(`<g id="titel">${txt(title,b.title)}</g>`);
         const d=profilePath(back,b.profile?.x ?? 150,b.profile?.y ?? 345,b.profile?.width ?? 724,b.profile?.height ?? 270);

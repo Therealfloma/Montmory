@@ -90,7 +90,7 @@ if(production){$('productionPanel').hidden=false;$('productionExport').addEventL
  warnings.push(...(window.MontmoryV71?.validateSvg(front.svg,'Vorderseite')||[]));
  warnings.push(...(window.MontmoryV71?.validateSvg(back.svg,'Rückseite')||[]));
  if(warnings.some(w=>w.level==='error'))throw new Error('Technische SVG-Prüfung fehlgeschlagen: '+warnings.filter(w=>w.level==='error').map(w=>w.message).join('; '));
- const manifest={bestellnummer:number,erstellt:new Date().toISOString(),titel:$('titleInput')?.value,geschenkmodus:!!$('giftEnabled')?.checked,widmung:gift(),breite_mm:Number($('markWidthMM')?.value),hoehe_mm:Number($('markHeightMM')?.value),dateien:[`${number}_${front.filename}`,`${number}_${back.filename}`],gravurpruefung:warnings,hinweis:'Vor Laserfertigung in LightBurn kontrollieren.'};
+ const manifest={bestellnummer:number,erstellt:new Date().toISOString(),titel:$('titleInput')?.value,geschenkmodus:!!$('giftEnabled')?.checked,zielort:window.MontmoryDestination?.get()||'',widmung:gift(),breite_mm:Number($('markWidthMM')?.value),hoehe_mm:Number($('markHeightMM')?.value),dateien:[`${number}_${front.filename}`,`${number}_${back.filename}`],gravurpruefung:warnings,hinweis:'Vor Laserfertigung in LightBurn kontrollieren.'};
  download(front.svg,manifest.dateien[0],'image/svg+xml');download(back.svg,manifest.dateien[1],'image/svg+xml');download(JSON.stringify(manifest,null,2),`${number}_Produktion.json`,'application/json');
  status.textContent=`${number}: Drei Dateien heruntergeladen. ${warnings.length} Prüfhinweise. Mehrfachdownloads ggf. im Browser erlauben.`;
  }catch(e){status.textContent=`Produktions-Export fehlgeschlagen: ${e.message}`;}
