@@ -40,6 +40,22 @@
 .about-final a:hover{background:#fff}
 @media(max-width:850px){.about-details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.about-details-grid{grid-template-columns:1fr}}
+
+/* V98: Gründerporträt */
+.about-founder{margin:40px 0 58px;padding:clamp(22px,4vw,48px);background:#f7f4ec;border-radius:22px;color:#263f34}
+.about-founder h2{max-width:850px;line-height:1.2;margin:8px 0 26px}
+.founder-photos{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:stretch}
+.founder-photos figure{margin:0;min-width:0}
+.founder-photos img{width:100%;height:440px;object-fit:cover;border-radius:15px;display:block}
+.founder-photos figure:first-child img{object-position:center 45%}
+.founder-photos figure:last-child img{object-position:center 58%}
+.founder-photos figcaption{font-size:12px;opacity:.72;padding:9px 3px 0}
+.founder-copy{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,4vw,45px);margin-top:32px}
+.founder-copy h3{font-size:clamp(20px,2.5vw,27px);margin:0 0 13px}
+.founder-copy p{line-height:1.75;margin:0 0 14px}
+.founder-line{font-family:Georgia,serif;font-size:clamp(19px,2.7vw,27px);font-style:italic;text-align:center;margin:30px auto 0;max-width:750px}
+@media(max-width:700px){.founder-photos{grid-template-columns:1fr 1fr}.founder-photos img{height:300px}.founder-copy{grid-template-columns:1fr}}
+@media(max-width:450px){.founder-photos{grid-template-columns:1fr}.founder-photos img{height:350px}}
 </style>
 </head>
 <body class="about-page">
@@ -72,6 +88,23 @@
           <p>Jeder Trail Mark erzählt seine eigene Geschichte. Deine Route wird zur individuellen Gravur auf Holz – ein persönlicher Meilenstein, der bleibt.</p>
           <p>Doch eine Erinnerung ist erst der Anfang: Mit MONTMORY kannst du deine Erlebnisse nach und nach sammeln und sichtbar machen.</p>
         </div>
+      </section>
+      <section class="about-founder" aria-labelledby="about-founder-title">
+        <p class="about-kicker">Der Gründer hinter MONTMORY</p>
+        <h2 id="about-founder-title">Aus Liebe zu den Bergen. Aus Leidenschaft für Erinnerungen.</h2>
+        <div class="founder-photos">
+          <figure><img src="./montmory-gruender-berge.jpg" alt="MONTMORY Gründer Florian bei einer Bergtour an einem See vor schneebedeckten Gipfeln" loading="lazy"><figcaption>Draußen in den Bergen – dort, wo viele Erinnerungen entstehen.</figcaption></figure>
+          <figure><img src="./montmory-gruender-zugspitz-ultra-trail.jpg" alt="Florian beim Zieleinlauf des Zugspitz Ultra Trails; Namen auf der Ergebnistafel unkenntlich gemacht" loading="lazy"><figcaption>Ein besonderer Moment beim Zugspitz Ultra Trail.</figcaption></figure>
+        </div>
+        <div class="founder-copy">
+          <div><h3>Hi, ich bin Florian.</h3>
+            <p>Die Berge sind für mich mehr als nur ein Ausflugsziel. Sie stehen für Freiheit, neue Herausforderungen und Momente, die lange im Kopf bleiben.</p>
+            <p>Beim Trailrunning erlebe ich genau das: intensive Anstiege, besondere Ausblicke und dieses Gefühl, nach vielen Kilometern im Ziel anzukommen.</p></div>
+          <div><h3>Warum MONTMORY?</h3>
+            <p>Ich wollte solchen Erlebnissen einen sichtbaren Platz geben – nicht nur auf dem Handy oder in einer Trainings-App, sondern als Erinnerung, die man jeden Tag vor Augen hat.</p>
+            <p>So wächst MONTMORY aus meiner Begeisterung für die Berge und dem Wunsch, mit Holz und Handwerk etwas Persönliches zu schaffen. In meiner kleinen Werkstatt entwickle ich die Trail Marks Schritt für Schritt weiter.</p></div>
+        </div>
+        <p class="founder-line">Nicht einfach nur ein Produkt. Sondern eine Idee, die aus echter Begeisterung entstanden ist.</p>
       </section>
       <section class="about-collection" aria-labelledby="collection-title">
         <p class="about-kicker">Das MONTMORY Sammelsystem</p>
