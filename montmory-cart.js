@@ -30,10 +30,14 @@
   const newButtons=()=>[$('cartNewMark'),$('newMarkFromStep3')].filter(Boolean);
   const hasActiveDraft=()=>Boolean(window.__montmoryGpxFile || $('gpxFile')?.files?.length);
   function syncNewMarkButtons(){
+    // Never show a new-configuration action until the current mark has been saved.
+    // For a fresh visit without an active GPX, allow the action only when a mark
+    // has actually been saved during this session.
     for(const button of newButtons()){
-      button.disabled=hasActiveDraft()&&!currentMarkSaved;
-      button.title=button.disabled?'Bitte diesen Trail Mark zuerst im Rucksack speichern':'Weitere Gestaltung beginnen';
-      button.setAttribute('aria-disabled',String(button.disabled));
+      button.hidden=!currentMarkSaved;
+      button.disabled=!currentMarkSaved;
+      button.title=currentMarkSaved?'Weitere Gestaltung beginnen':'Zuerst aktuellen Trail Mark speichern';
+      button.setAttribute('aria-disabled',String(!currentMarkSaved));
     }
     const hint=$('saveBeforeNewHint');if(hint)hint.hidden=currentMarkSaved||!hasActiveDraft();
   }
