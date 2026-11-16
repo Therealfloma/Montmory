@@ -24,6 +24,22 @@
 .collection-step p{margin:2px 0 0;line-height:1.55}
 .collection-note{font-size:12px;opacity:.75;margin-top:16px}
 @media(max-width:680px){.collection-visual{grid-template-columns:1fr}.collection-board{min-height:260px}.collection-mark strong{font-size:11px}.collection-mark small{font-size:9px}}
+
+.about-details{margin:54px 0;padding:clamp(24px,4vw,48px);border:1px solid #ddd5c6;border-radius:22px;background:#faf8f2}
+.about-details h2{margin:8px 0 14px}
+.about-details-lead{max-width:780px;line-height:1.7}
+.about-details-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:25px}
+.about-detail{background:#f0eee6;border-radius:14px;padding:22px 17px}
+.about-detail b{display:block;color:#315343;font-size:12px;letter-spacing:.12em;margin-bottom:14px}
+.about-detail h3{font-size:17px;margin:0 0 9px;color:#263f34}
+.about-detail p{font-size:14px;line-height:1.65;margin:0}
+.about-final{padding:clamp(32px,5vw,64px);margin:45px 0 20px;border-radius:22px;background:#263f34;color:#fff;text-align:center}
+.about-final h2{color:#fff;margin:10px auto 18px;max-width:720px}
+.about-final p{max-width:650px;margin:0 auto 25px;line-height:1.75}
+.about-final a{display:inline-block;background:#f4e9d2;color:#263f34;border-radius:9px;padding:15px 25px;text-decoration:none;font-weight:700}
+.about-final a:hover{background:#fff}
+@media(max-width:850px){.about-details-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.about-details-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="about-page">
@@ -73,6 +89,18 @@
         </div>
         <p class="collection-note">KI-generiertes Konzeptbild zur Veranschaulichung des Sammelsystems – das spätere Produkt kann davon abweichen.</p>
       </section>
+
+      <section class="about-details" aria-labelledby="about-details-title">
+        <p class="about-kicker">Der Trail Mark im Detail</p>
+        <h2 id="about-details-title">Kleine Form. Große Erinnerung.</h2>
+        <p class="about-details-lead">Jeder Trail Mark macht eine Tour auf einen Blick wiedererkennbar – und fügt sich in deine persönliche Sammlung ein.</p>
+        <div class="about-details-grid">
+          <article class="about-detail"><b>01</b><h3>Charakteristische Gipfelform</h3><p>Die markante Silhouette verbindet jeden Trail Mark sichtbar mit der Welt der Berge.</p></article>
+          <article class="about-detail"><b>02</b><h3>Deine echte Strecke</h3><p>Aus deiner GPX-Datei entsteht eine persönliche Darstellung der Route oder des Höhenprofils.</p></article>
+          <article class="about-detail"><b>03</b><h3>Deine Tourdaten</h3><p>Tourname, Distanz und Höhenmeter machen aus dem Holzstück deine individuelle Erinnerung.</p></article>
+          <article class="about-detail"><b>04</b><h3>Magnetisches Sammeln</h3><p>Die Trail Marks lassen sich auf dem geplanten MONTMORY Board ergänzen und neu anordnen.</p></article>
+        </div>
+      </section>
       <section class="about-intro" aria-labelledby="about-moments-title">
         <div><p class="about-kicker">Was wirklich zählt</p><h2 id="about-moments-title">Sammle keine Kilometer. Sammle Erinnerungen.</h2></div>
         <div class="about-copy">
@@ -93,11 +121,11 @@
         <blockquote>„Deine Wege. Deine Meilensteine. Deine Sammlung.“</blockquote>
         <p>From Mountains to Memories.</p>
       </section>
-      <section class="about-cta" aria-labelledby="about-cta-title">
-        <p class="about-kicker">Deine Geschichte aus Holz</p>
-        <h2 id="about-cta-title">Welche Tour möchtest du festhalten?</h2>
-        <p>Gestalte deinen persönlichen Trail Mark mit deiner eigenen Strecke.</p>
-        <a href="./index.html#konfigurator">Trail Mark gestalten →</a>
+      <section class="about-final" aria-labelledby="about-cta-title">
+        <p class="about-kicker">Dein nächstes Kapitel</p>
+        <h2 id="about-cta-title">Deine Geschichte ist noch nicht zu Ende.</h2>
+        <p>Jeder Gipfel, jeder Trail und jeder persönliche Meilenstein verdient einen Platz in deiner Sammlung. Beginne mit deinem ersten Trail Mark.</p>
+        <a href="./index.html#konfigurator">Meinen Trail Mark gestalten →</a>
       </section>
     </div>
   </main>
