@@ -26,12 +26,30 @@
 .cart-totals{margin:14px 0;padding:14px;border-radius:10px;background:#eaece4}
 
 /* MONTMORY V112: stets erreichbarer Trail-Mark-Rucksack */
-.montmory-pack-shortcut{position:fixed;top:16px;right:18px;z-index:9999;display:flex;align-items:center;justify-content:center;width:58px;height:58px;padding:0;border:1px solid #c9bda6;border-radius:17px;background:#f9f5e9;color:#294a3c;box-shadow:0 5px 20px #172a2133;cursor:pointer;transition:transform .15s,background .15s}
+.montmory-pack-shortcut{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));right:20px;z-index:9999;display:flex;align-items:center;justify-content:center;width:58px;height:58px;padding:0;border:1px solid #c9bda6;border-radius:17px;background:#f9f5e9;color:#294a3c;box-shadow:0 5px 20px #172a2133;cursor:pointer;transition:transform .15s,background .15s}
 .montmory-pack-shortcut:hover,.montmory-pack-shortcut:focus-visible{background:#efe5d1;transform:translateY(-2px)}
 .montmory-pack-shortcut svg{width:31px;height:31px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.montmory-pack-count{position:absolute;top:-8px;right:-8px;display:grid;place-items:center;min-width:25px;height:25px;padding:0 5px;border-radius:99px;background:#294a3c;color:white;border:2px solid #f9f5e9;font:700 12px/1 Arial,sans-serif}
-@media(max-width:600px){.montmory-pack-shortcut{top:12px;right:12px;width:51px;height:51px}.montmory-pack-shortcut svg{width:28px;height:28px}}
+.montmory-pack-count{position:absolute;top:-7px;right:-7px;display:grid;place-items:center;min-width:25px;height:25px;padding:0 5px;border-radius:99px;background:#294a3c;color:white;border:2px solid #f9f5e9;font:700 12px/1 Arial,sans-serif}
+@media(max-width:600px){.montmory-pack-shortcut{bottom:calc(16px + env(safe-area-inset-bottom));right:14px;width:54px;height:54px}.montmory-pack-shortcut svg{width:28px;height:28px}}
 #montmoryCart{scroll-margin-top:88px}
+
+/* V113: Rucksack als unabhängige Übersicht und klare Aktionen in Schritt 3 */
+.cart-backdrop[hidden],#montmoryCart[hidden]{display:none!important}
+.cart-backdrop{position:fixed;inset:0;background:rgba(19,34,27,.52);z-index:10010}
+#montmoryCart{position:fixed;z-index:10011;inset:4vh max(12px,calc((100vw - 880px)/2));overflow-y:auto;overscroll-behavior:contain;margin:0;padding:clamp(16px,3vw,30px);max-height:92vh;background:#fbfaf6;box-shadow:0 16px 65px #14251e55;scroll-margin:0}
+#montmoryCart .montmory-cart-head{align-items:center;border-bottom:1px solid #ddd9cf;padding-bottom:12px;margin-bottom:16px}
+#montmoryCart .montmory-cart-head h3{margin:0}
+#cartTotals{font-size:1rem;line-height:1.6}
+.cart-item-price{font-weight:700;color:#294a3c;margin-top:8px!important}
+.cart-item-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.cart-item-images{grid-template-columns:repeat(2,minmax(0,180px))}
+.step3-next-actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.step3-next-actions button{flex:1 1 190px}
+#orderReview #addMarkToCart{display:block;width:100%;margin:16px 0 8px}
+#orderReview #cancelOrderReview{display:block;margin:0 0 14px}
+#montmoryPackShortcut{z-index:10000}
+body.cart-dialog-open{overflow:hidden}
+@media(max-width:600px){#montmoryCart{inset:8px 8px max(8px,env(safe-area-inset-bottom));max-height:none;border-radius:16px} .cart-item-images{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
@@ -39,6 +57,16 @@
     <span id="montmoryPackCount" class="montmory-pack-count" aria-hidden="true">0</span>
   </button>
 
+  <div id="cartBackdrop" class="cart-backdrop" hidden></div>
+            <section class="montmory-cart" id="montmoryCart" aria-labelledby="cartTitle" role="dialog" aria-modal="true" tabindex="-1" hidden>
+              <div class="montmory-cart-head"><h3 id="cartTitle">Dein Rucksack <span id="cartCount">(0)</span></h3><button type="button" id="cartClose" class="review-cancel" aria-label="Rucksack schließen">✕ Schließen</button></div>
+              <p id="cartEmpty">Noch keine Trail Marks gespeichert. Erstelle zunächst eine unverbindliche Übersicht.</p>
+              <div id="cartItems" class="cart-items"></div>
+              <div id="cartTotals" class="cart-totals" hidden></div>
+              <button type="button" id="cartNewMark" class="primary-button" hidden>+ Weiteren Trail Mark gestalten</button>
+              <p class="muted">Gespeichert nur in diesem Browser. Keine Bestellung, keine Zahlung. Beispielpreise und Lieferzeiten sind unverbindlich. Der Warenkorb wird nicht an MONTMORY übertragen.</p>
+              <p id="cartStatus" role="status" aria-live="polite"></p>
+            </section>
   <header class="brand-header">
     <div class="brand-inner">
       <a href="./index.html" class="brand-home" aria-label="MONTMORY Startseite"><img src="./montmory-logo.png" alt="MONTMORY – From Mountains to Memories" class="company-logo"></a>
@@ -49,7 +77,7 @@
   <section class="alpine-hero" aria-label="MONTMORY Bergwelt"><div class="alpine-hero-content"><h1>Deine Tour. Dein Unikat.</h1><p>Gestalte deine persönliche Erinnerung aus Holz.</p><a class="hero-cta" href="#konfigurator">⌁ &nbsp; Trail Mark gestalten &nbsp; →</a></div></section>
   <main class="configurator-shell" id="konfigurator">
     
-    <nav class="wizard-nav" aria-label="Konfigurationsschritte"><button type="button" data-wizard-go="1" class="active"><span class="wizard-number">1</span><span>GPX hochladen</span></button><button type="button" data-wizard-go="2"><span class="wizard-number">2</span><span>Gestalten</span></button><button type="button" data-wizard-go="3"><span class="wizard-number">3</span><span>Bestellen</span></button></nav>
+    <nav class="wizard-nav" aria-label="Konfigurationsschritte"><button type="button" data-wizard-go="1" class="active"><span class="wizard-number">1</span><span>GPX hochladen</span></button><button type="button" data-wizard-go="2"><span class="wizard-number">2</span><span>Gestalten</span></button><button type="button" data-wizard-go="3"><span class="wizard-number">3</span><span>Übersicht</span></button></nav>
     <div class="config-grid">
       <section class="controls-column">
         <section class="card upload-card" data-wizard-step="1">
@@ -138,7 +166,7 @@
         <section class="card send-config-panel" data-wizard-step="3">
           <div class="step">3</div>
           <div class="card-content">
-            <h2>Deine Bestellübersicht</h2>
+            <h2>Deinen Trail Mark prüfen</h2>
             <p class="send-intro">Sieh dir deine Gestaltung, die unverbindlichen Beispielpreise und die geplante Lieferzeit an. <strong>MONTMORY befindet sich noch in der Entwicklung – Bestellungen sind derzeit nicht möglich.</strong></p>
             <div class="customer-fields" hidden>
               <label class="field"><span>Dein Name *</span><input id="customerName" type="text" autocomplete="name" maxlength="100" required placeholder="Vor- und Nachname"></label>
@@ -156,19 +184,11 @@
               <label class="field"><span>Nachricht (optional)</span><textarea id="customerNote" rows="2" maxlength="500" placeholder="Weitere Wünsche zur Bestellung"></textarea></label>
             </div>
             <p class="muted">Diese Übersicht ist eine unverbindliche Vorschau. Es werden keine Bestellungen angenommen und keine Zahlungen ausgelöst.</p>
-            <button id="sendConfiguration" type="button" class="primary-button">Unverbindliche Übersicht anzeigen <span aria-hidden="true">→</span></button>
+            <button id="sendConfiguration" type="button" class="primary-button">1. Gestaltung &amp; Preisvorschau prüfen <span aria-hidden="true">→</span></button>
             <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Lade deine Tour hoch, um deine unverbindliche Übersicht zu sehen.</div>
-            <div class="whatsapp-order"><span>Du bist dir noch unsicher?</span><a id="whatsappOrder" class="whatsapp-link" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer">Frage zu meiner Bestellung per WhatsApp ↗</a><p class="muted whatsapp-hint">WhatsApp dient nur zur Beratung – es wird keine Bestellung versendet.</p></div>
+
             <a id="openEmailDraft" href="#" hidden>E-Mail-Entwurf erneut öffnen</a>
-            <section class="montmory-cart" id="montmoryCart" aria-labelledby="cartTitle">
-              <div class="montmory-cart-head"><h3 id="cartTitle">Dein Warenkorb <span id="cartCount">(0)</span></h3><span>Unverbindliche Merkliste</span></div>
-              <p id="cartEmpty">Noch keine Trail Marks gespeichert. Erstelle zunächst eine unverbindliche Übersicht.</p>
-              <div id="cartItems" class="cart-items"></div>
-              <div id="cartTotals" class="cart-totals" hidden></div>
-              <button type="button" id="cartNewMark" class="review-cancel" hidden>+ Neuen Trail Mark konfigurieren</button>
-              <p class="muted">Gespeichert nur in diesem Browser. Keine Bestellung, keine Zahlung. Beispielpreise und Lieferzeiten sind unverbindlich. Der Warenkorb wird nicht an MONTMORY übertragen.</p>
-              <p id="cartStatus" role="status" aria-live="polite"></p>
-            </section>
+
             <div id="orderReview" class="order-review" hidden>
               <h3>Dein Trail Mark auf einen Blick</h3>
               <div id="customerSummary" class="customer-summary"></div>
@@ -179,9 +199,11 @@
                 <figure><figcaption>Rückseite</figcaption><img id="orderPreviewBack" alt="SVG-Gravur Rückseite"></figure>
               </div>
               <p class="muted"><strong>Keine Bestellung:</strong> Diese Ansicht dient ausschließlich zur Planung. Ein Kaufabschluss ist derzeit nicht möglich.</p>
-              <button type="button" id="addMarkToCart" class="primary-button">Trail Mark im Warenkorb speichern</button>
-              <button type="button" id="cancelOrderReview" class="review-cancel">Zurück zur Bearbeitung</button>
+              <button type="button" id="addMarkToCart" class="primary-button">2. Trail Mark im Rucksack speichern</button>
+              <button type="button" id="cancelOrderReview" class="review-cancel">Gestaltung ändern</button>
             </div>
+            <div class="step3-next-actions"><button type="button" id="openCartFromStep3" class="review-cancel">🎒 Rucksack &amp; Preisübersicht öffnen</button><button type="button" id="newMarkFromStep3" class="review-cancel">+ Weiteren Trail Mark gestalten</button></div>
+            <div class="whatsapp-order"><span>Du bist dir noch unsicher?</span><a id="whatsappOrder" class="whatsapp-link" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer">Frage zu meiner Bestellung per WhatsApp ↗</a><p class="muted whatsapp-hint">WhatsApp dient nur zur Beratung – es wird keine Bestellung versendet.</p></div>
           </div>
         </section>
 
@@ -315,7 +337,7 @@
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=112"></script>
+  <script src="./montmory-cart.js?v=113"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>

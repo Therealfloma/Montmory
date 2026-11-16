@@ -24,6 +24,32 @@
   const put=x=>transaction('readwrite',s=>s.put(x));
   const del=id=>transaction('readwrite',s=>s.delete(id));
   const get=id=>transaction('readonly',s=>s.get(id));
+  const dialog=$('montmoryCart'),backdrop=$('cartBackdrop'),pack=$('montmoryPackShortcut');
+  let previousFocus=null;
+  function openCart(){
+    previousFocus=document.activeElement;
+    dialog.hidden=false;backdrop.hidden=false;document.body.classList.add('cart-dialog-open');
+    render().catch(e=>setStatus('Übersicht nicht verfügbar: '+e.message));
+    $('cartClose')?.focus();
+  }
+  function closeCart(){
+    dialog.hidden=true;backdrop.hidden=true;document.body.classList.remove('cart-dialog-open');
+    if(previousFocus?.isConnected)previousFocus.focus();
+  }
+  pack?.addEventListener('click',openCart);
+  $('openCartFromStep3')?.addEventListener('click',openCart);
+  $('cartClose')?.addEventListener('click',closeCart);
+  backdrop?.addEventListener('click',closeCart);
+  document.addEventListener('keydown',e=>{
+    if(dialog.hidden)return;
+    if(e.key==='Escape'){e.preventDefault();closeCart();}
+    if(e.key==='Tab'){
+      const nodes=[...dialog.querySelectorAll('button:not([disabled]),a[href],input:not([disabled])')].filter(el=>el.getClientRects().length);
+      if(!nodes.length)return;
+      if(e.shiftKey&&document.activeElement===nodes[0]){e.preventDefault();nodes.at(-1).focus();}
+      else if(!e.shiftKey&&document.activeElement===nodes.at(-1)){e.preventDefault();nodes[0].focus();}
+    }
+  });
   function svgImage(svg){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);}
   function addText(el,tag,value){const child=document.createElement(tag);child.textContent=value;el.append(child);return child;}
   async function render(){
@@ -37,13 +63,22 @@
     $('cartNewMark').hidden=marks.length===0;
     $('cartTotals').hidden=marks.length===0;
     if(marks.length){
-      $('cartTotals').textContent=`${marks.length} Trail Mark${marks.length===1?'':'s'} · Beispielhafter Warenwert: ${(marks.length*14.9).toFixed(2).replace('.',',')}–${(marks.length*19.9).toFixed(2).replace('.',',')} € · Versand nicht enthalten · Lieferzeit nach künftigem Verkaufsstart möglicherweise 7–14 Werktage (unverbindlich).`;
+      const euro=n=>n.toFixed(2).replace('.',',')+' €';
+      const totals=$('cartTotals');totals.replaceChildren();
+      addText(totals,'h4','Unverbindliche Preisübersicht');
+      addText(totals,'p',`${marks.length} × Trail Mark · je 14,90–19,90 € (Beispielpreise)`);
+      const total=addText(totals,'p',`Warenwert: ${euro(marks.length*14.9)} bis ${euro(marks.length*19.9)}`);total.style.fontWeight='700';
+      addText(totals,'p','Versandkosten: noch nicht festgelegt');
+      addText(totals,'p','Endpreis inklusive Versand: derzeit nicht berechenbar');
+      addText(totals,'p','Mögliche Lieferzeit nach Verkaufsstart: 7–14 Werktage (unverbindliche Schätzung)');
+      addText(totals,'p','MONTMORY befindet sich in Entwicklung. Aktuell sind keine Bestellungen oder Zahlungen möglich.');
     }
     for(const mark of marks){
       const article=document.createElement('article');article.className='cart-item';
       const head=document.createElement('div');head.className='cart-item-header';
       addText(head,'h4',mark.title||'Mein Trail Mark');addText(head,'span','1 × Trail Mark');article.append(head);
       addText(article,'p',`${mark.km||'–'} · ${mark.hm||'–'} · ${mark.date||'–'}`);
+      const itemPrice=addText(article,'p','Beispielpreis pro Trail Mark: 14,90–19,90 €');itemPrice.className='cart-item-price';
       if(mark.destination)addText(article,'p','Zielort: '+mark.destination);
       const imgs=document.createElement('div');imgs.className='cart-item-images';
       for(const [label,svg] of [['Vorderseite',mark.front],['Rückseite',mark.back]]){
@@ -61,7 +96,7 @@
           if(!selected?.gpxText)throw new Error('Für diesen älteren Warenkorb-Eintrag wurde die GPX-Datei noch nicht gespeichert. Bitte die Strecke erneut hochladen und den Mark neu speichern.');
           sessionStorage.setItem('montmory-cart-edit-id',selected.id);
           setStatus('Konfiguration wird geladen …');
-          await restore(selected);
+          closeCart();await restore(selected);
         }catch(e){setStatus('Bearbeiten nicht möglich: '+e.message);}
       });
       actions.append(edit,remove);article.append(actions);list.append(article);
@@ -106,17 +141,6 @@
     document.querySelector('#konfigurator')?.scrollIntoView({behavior:'smooth',block:'start'});
     setStatus('Trail Mark geladen. Änderungen vornehmen und erneut im Warenkorb speichern.');
   }
-  $('montmoryPackShortcut')?.addEventListener('click',()=>{
-    const step3=document.querySelector('[data-wizard-go="3"]');
-    // Den bestehenden Assistenten benutzen, damit der Warenkorb auch aus Schritt 1/2 sichtbar ist.
-    if(step3)step3.click();
-    const target=$('montmoryCart');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      target?.scrollIntoView({behavior:'smooth',block:'start'});
-      target?.setAttribute('tabindex','-1');
-      target?.focus({preventScroll:true});
-    }));
-  });
   $('addMarkToCart')?.addEventListener('click',async()=>{
     const button=$('addMarkToCart');button.disabled=true;
     try{
@@ -140,13 +164,15 @@
         hm:$('previewGain')?.textContent,date:$('previewDate')?.textContent,
         destination:window.MontmoryDestination?.get?.()||'',front:r.front.svg,back:r.back.svg};
       await put(mark);sessionStorage.removeItem('montmory-cart-edit-id');await render();setStatus('Trail Mark gespeichert. Du kannst jetzt eine neue Konfiguration starten.');
-      $('montmoryCart').scrollIntoView({behavior:'smooth',block:'start'});
+      openCart();
     }catch(e){setStatus('Speichern fehlgeschlagen: '+e.message);}
     finally{button.disabled=false;}
   });
-  $('cartNewMark')?.addEventListener('click',()=>{
+  function newMark(){
     // Neustart setzt alle alten GPX- und Formulardaten sicher zurück; IndexedDB-Warenkorb bleibt erhalten.
     sessionStorage.removeItem('montmory-cart-edit-id');window.location.href=window.location.pathname+'#konfigurator';window.location.reload();
-  });
+  }
+  $('cartNewMark')?.addEventListener('click',newMark);
+  $('newMarkFromStep3')?.addEventListener('click',newMark);
   render().catch(e=>setStatus('Warenkorb konnte nicht geladen werden: '+e.message));
 })();
