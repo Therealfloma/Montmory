@@ -66,19 +66,24 @@
 .about-value p{margin:0;line-height:1.65;font-size:15px}
 @media(max-width:700px){.about-values-grid{grid-template-columns:1fr}}
 
-/* V108: Unverbindliche Preis- und Lieferinformationen in der Entwicklungsphase */
-.about-pricing{margin:42px 0;padding:clamp(24px,4vw,48px);background:#f7f4ec;border:1px solid #ded7c9;border-radius:22px;color:#263f34}
-.about-pricing h2{margin:8px 0 14px}
-.about-pricing-lead{max-width:790px;line-height:1.75}
-.about-pricing-notice{margin:20px 0 25px;padding:18px 20px;border-left:4px solid #8b6846;background:#fffaf1;border-radius:8px;line-height:1.7}
-.about-pricing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0}
-.about-pricing-card{padding:21px;background:#fffaf1;border-radius:14px}
-.about-pricing-card h3{font-size:17px;margin:0 0 9px;color:#263f34}
-.about-pricing-card strong{font-size:24px;display:block;margin-bottom:8px}
-.about-pricing-card p{font-size:14px;line-height:1.65;margin:0}
-.about-pricing-delivery{margin-top:20px;padding-top:18px;border-top:1px solid #ded7c9;line-height:1.7}
-.about-pricing-small{font-size:13px;opacity:.8;line-height:1.65}
-@media(max-width:650px){.about-pricing-grid{grid-template-columns:1fr}}
+/* V114: zurückhaltende Produktgalerie mit kleiner Preisnotiz */
+.about-pricing{margin:52px 0;padding:clamp(18px,3vw,36px);background:#f7f5ef;border-radius:20px;color:#263f34}
+.about-pricing h2{margin:7px 0 10px}
+.about-pricing-lead{max-width:720px;line-height:1.7;margin-bottom:20px}
+.about-pricing-notice{font-size:13px;line-height:1.65;color:#59675e;border-top:1px solid #dedfd6;padding:13px 0;margin:22px 0 0}
+.about-pricing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.about-pricing-card{background:#fffdf8;border:1px solid #e7e4db;border-radius:15px;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease}
+.about-pricing-card:hover{transform:translateY(-3px);box-shadow:0 10px 25px #233b2a13}
+.about-pricing-card img{display:block;width:100%;height:210px;object-fit:cover}
+.about-pricing-card-content{padding:17px 18px 19px}
+.about-pricing-card h3{font-size:18px;line-height:1.3;margin:0 0 7px;color:#263f34}
+.about-pricing-card p{font-size:14px;line-height:1.6;margin:0 0 10px;color:#536158}
+.about-pricing-card .price-hint{display:block;font-size:13px;font-weight:400;color:#778178;letter-spacing:.01em}
+.about-pricing-delivery{margin-top:22px;padding-top:17px;border-top:1px solid #dedfd6;line-height:1.65;color:#58655c;font-size:14px}
+.about-pricing-delivery h3{font-size:16px;color:#33493c;margin:0 0 6px}
+.about-pricing-delivery p{margin:0 0 9px}
+.about-pricing-small{font-size:12px;color:#788078;line-height:1.6}
+@media(max-width:650px){.about-pricing-grid{grid-template-columns:1fr}.about-pricing-card img{height:225px}}
 </style>
 </head>
 <body class="about-page">
@@ -183,17 +188,33 @@
         </div>
       </section>
       <section class="about-pricing" aria-labelledby="about-pricing-title">
-        <p class="about-kicker">Ein Blick nach vorn</p>
-        <h2 id="about-pricing-title">Geplante Preise &amp; Lieferzeit</h2>
-        <p class="about-pricing-lead">Wir möchten besondere Erinnerungsstücke schaffen, die hochwertig verarbeitet und zugleich für viele Wanderer und Trailrunner erreichbar sind. Deshalb zeigen wir dir schon jetzt eine erste Orientierung.</p>
-        <div class="about-pricing-notice" role="status"><strong>MONTMORY befindet sich noch in der Entwicklung.</strong> Die nachfolgenden Preise und Lieferzeiten sind ausschließlich unverbindliche Beispiele. Es handelt sich nicht um ein Verkaufsangebot. <strong>Aktuell können noch keine Bestellungen angenommen werden.</strong></div>
+        <p class="about-kicker">Deine Erinnerungen. Dein Weg.</p>
+        <h2 id="about-pricing-title">So könnte deine Sammlung wachsen</h2>
+        <p class="about-pricing-lead">Ein besonderer Gipfel, drei unvergessliche Touren oder eine ganze Sammlung: Hier bekommst du einen ersten Eindruck von den geplanten Möglichkeiten.</p>
         <div class="about-pricing-grid">
-          <article class="about-pricing-card"><h3>Einzelner Trail Mark</h3><strong>ca. 14,90–19,90 €</strong><p>Eine persönliche Erinnerung an eine besondere Tour.</p></article>
-          <article class="about-pricing-card"><h3>3er-Set Trail Marks</h3><strong>ca. 39,90–49,90 €</strong><p>Mehrere Erlebnisse, die gemeinsam deine Geschichte erzählen.</p></article>
-          <article class="about-pricing-card"><h3>Personalisiertes Sammelboard</h3><strong>ca. 59,90–89,90 €</strong><p>Ein geplanter Platz für deine wachsende Trail-Mark-Sammlung.</p></article>
-          <article class="about-pricing-card"><h3>Starter-Set</h3><strong>ca. 99,90–129,90 €</strong><p>Geplant als Kombination aus Sammelboard und drei Trail Marks.</p></article>
+          <article class="about-pricing-card">
+            <img src="./montmory-beispiel-trail-mark.jpg" alt="Beispielvisualisierung eines einzelnen Trail Marks aus hellem Holz mit Berg- und Streckengravur" loading="lazy">
+            <div class="about-pricing-card-content"><h3>Ein Trail Mark. Eine Geschichte.</h3><p>Für den Weg, an den du dich immer erinnern möchtest.</p><span class="price-hint">Preisidee: ca. 14,90–19,90 €</span></div>
+          </article>
+          <article class="about-pricing-card">
+            <img src="./montmory-beispiel-trail-marks-3er-set.jpg" alt="Beispielvisualisierung von drei Trail Marks mit unterschiedlichen Berg- und Routengravuren" loading="lazy">
+            <div class="about-pricing-card-content"><h3>Drei Wege, viele Erinnerungen.</h3><p>Ein kleines Kapitel deiner persönlichen Berggeschichte.</p><span class="price-hint">Preisidee: ca. 39,90–49,90 €</span></div>
+          </article>
+          <article class="about-pricing-card">
+            <img src="./montmory-beispiel-sammelboard.jpg" alt="Beispielvisualisierung eines hellen gerahmten Sammelboards mit Berg- und Höhenliniengravur" loading="lazy">
+            <div class="about-pricing-card-content"><h3>Ein Platz für deine Abenteuer.</h3><p>Das Sammelboard als Zuhause für deine Trail Marks.</p><span class="price-hint">Preisidee: ca. 59,90–89,90 €</span></div>
+          </article>
+          <article class="about-pricing-card">
+            <img src="./montmory-beispiel-starter-set.jpg" alt="Beispielvisualisierung eines Sammelboards mit drei Trail Marks in Gipfelform" loading="lazy">
+            <div class="about-pricing-card-content"><h3>Gemeinsam anfangen.</h3><p>Ein geplantes Starter-Set aus Board und drei Marks.</p><span class="price-hint">Preisidee: ca. 99,90–129,90 €</span></div>
+          </article>
         </div>
-        <div class="about-pricing-delivery"><h3>Wie lange dauert die Lieferung?</h3><p>Eine verbindliche Produktions- und Lieferzeit können wir derzeit noch nicht nennen. Als <strong>rein beispielhafte Planungsgröße</strong> denken wir nach einem zukünftigen Verkaufsstart an etwa <strong>7–14 Werktage</strong> ab bestätigter Bestellung. Ob das tatsächlich möglich ist, prüfen wir erst anhand der fertigen Produktion und des Versands.</p><p class="about-pricing-small">Alle Beträge sind unverbindliche Preisideen und keine Endpreise. Versandkosten und tatsächliche Lieferbedingungen stehen noch nicht fest. Vor dem Verkaufsstart veröffentlichen wir die verbindlichen Angaben.</p></div>
+        <p class="about-pricing-notice"><strong>Ein Blick in die Entwicklung:</strong> MONTMORY ist noch nicht erhältlich. Alle Bilder sind beispielhafte Visualisierungen, keine Fotos fertiger Serienprodukte. Die Preisideen sind unverbindlich; aktuell können keine Bestellungen angenommen werden.</p>
+        <div class="about-pricing-delivery">
+          <h3>Und wie lange würde es dauern?</h3>
+          <p>Als erste, unverbindliche Orientierung sind nach einem zukünftigen Verkaufsstart etwa 7–14 Werktage angedacht. Die tatsächliche Lieferzeit und Versandkosten stehen noch nicht fest.</p>
+          <p class="about-pricing-small">Keine verbindlichen Preise, Lieferzusagen oder Verkaufsangebote. Angaben können sich bis zum Verkaufsstart ändern.</p>
+        </div>
       </section>
       <section class="about-quote" aria-label="MONTMORY Leitgedanke">
         <blockquote>„Jedes Abenteuer verdient einen Platz.“</blockquote>
