@@ -90,34 +90,34 @@
       return corners.some((c,i)=>intersect(a,b,c,corners[(i+1)%4]));
     }
     const words=label.trim().split(/\s+/);
-    // Two words: try one line at full size, then two lines before shrinking.
-    const layouts=words.length===2 ? [
-      {fontSize:40,lines:[label]},
-      ...[40,36,32,28,24,20].map(fontSize=>({fontSize,lines:words})),
-      ...[36,32,28,24,20].map(fontSize=>({fontSize,lines:[label]}))
-    ] : [40,36,32,28,24,20].map(fontSize=>({fontSize,lines:[label]}));
+    // Lesbarkeit hat Vorrang: bei zwei Woertern zuerst zwei Zeilen in grosser Schrift.
+    // Einheitliche Breitenabschaetzung in Vorschau und SVG, damit beide gleich umbrechen.
+    const layouts=words.length===2
+      ? [...[44,40,36,32].map(fontSize=>({fontSize,lines:words})),
+         ...[40,36,32].map(fontSize=>({fontSize,lines:[label]}))]
+      : [44,40,36,32].map(fontSize=>({fontSize,lines:[label]}));
     for(const {fontSize,lines} of layouts) {
-      const lineHeight=fontSize*1.3;
+      const lineHeight=fontSize*1.28;
       const width=Math.max(...lines.map(line=>measure(fontSize,line)));
-      const height=fontSize*1.22+(lines.length-1)*lineHeight;
-      if(width>box.width-24)continue;
+      const height=fontSize*1.3+(lines.length-1)*lineHeight;
+      if(width>box.width-20 || height>box.height-16)continue;
       const offsets=[
-        [22,-height-20],[-width-22,-height-20],
-        [22,20],[-width-22,20],
-        [-width/2,-height-34],[-width/2,34],
-        [34,-height/2],[-width-34,-height/2]
+        [24,-height-24],[-width-24,-height-24],
+        [24,24],[-width-24,24],
+        [-width/2,-height-35],[-width/2,35],
+        [38,-height/2],[-width-38,-height/2]
       ];
       const candidates=offsets.map(([dx,dy])=>({left:end.x+dx,top:end.y+dy}));
-      // In engen Routen: freie Position in der Naehe des Zielpunkts suchen.
-      for(let yy=box.y+8; yy<=box.y+box.height-height-8;yy+=18)
-        for(let xx=box.x+8;xx<=box.x+box.width-width-8;xx+=18)
+      // Raster fuer groessere freie Flaechen, unabhaengig von der Zielpunktnaehe.
+      for(let yy=box.y+8; yy<=box.y+box.height-height-8;yy+=12)
+        for(let xx=box.x+8;xx<=box.x+box.width-width-8;xx+=12)
           candidates.push({left:xx,top:yy});
       const good=candidates.map(c=>({...c,right:c.left+width,bottom:c.top+height}))
         .filter(inside)
         .filter(r=>!points.slice(1).some((pt,i)=>segmentHitsRect(points[i],pt,r)))
         .sort((a,b)=>Math.hypot(a.left+width/2-end.x,a.top+height/2-end.y)-
                      Math.hypot(b.left+width/2-end.x,b.top+height/2-end.y));
-      if(good.length)return {x:good[0].left,y:good[0].top+fontSize*0.61,fontSize,lineHeight,lines};
+      if(good.length)return {x:good[0].left,y:good[0].top+fontSize*0.65,fontSize,lineHeight,lines};
     }
     return null; // Keine sichere Position: keine ueberlappende Gravur erzeugen.
   }
