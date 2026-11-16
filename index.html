@@ -12,6 +12,20 @@
 .shipping-address-row{display:grid;grid-template-columns:minmax(110px,1fr) minmax(170px,2fr);gap:12px}
 .shipping-address small{display:block;margin-top:9px;color:#66736d}
 @media(max-width:540px){.shipping-address-row{grid-template-columns:1fr}}
+
+/* V119: ruhige Bestellübersicht und klare Pflichtfelder */
+#cartTotals{padding:16px 18px}
+#cartTotals p{margin:5px 0}
+#montmoryCart .cart-item{padding:15px 18px}
+#montmoryCart .cart-item-images img{max-height:125px}
+.cart-customer-form{display:grid;gap:15px}
+.cart-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.cart-form-grid label{display:flex;flex-direction:column;gap:6px;font-size:.86rem;font-weight:600;color:#344b3e}
+.cart-form-grid input{box-sizing:border-box;width:100%;min-width:0;border:1px solid #cbd3c8;border-radius:10px;background:#fff;padding:12px;font:inherit;color:#223c30}
+.cart-form-grid input:focus{outline:2px solid #5d806a;outline-offset:1px}
+.cart-form-city{grid-template-columns:100px minmax(0,1fr)}
+.cart-consent{font-weight:400!important}
+@media(max-width:620px){.cart-form-grid{grid-template-columns:1fr}.cart-form-city{grid-template-columns:100px minmax(0,1fr)}}
 </style>
 <style>.customer-fields[hidden]{display:none!important}.order-cost-preview{margin:20px 0;padding:20px;border:1px solid #d5d9cf;border-radius:14px;background:#f7f6ef}.order-cost-preview h4{margin:0 0 14px;font-size:1.08rem}.order-cost-preview p{margin:9px 0;line-height:1.55}.order-cost-preview .muted{margin-top:18px}</style><style>
 .montmory-cart{margin:24px 0;padding:22px;border:1px solid #d8d7cd;border-radius:16px;background:#fbfaf6}
@@ -102,21 +116,34 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
               <div id="cartItems" class="cart-items"></div>
               <div id="cartTotals" class="cart-totals" hidden></div>
               <button type="button" id="cartNewMark" class="primary-button" hidden>+ Weiteren Trail Mark gestalten</button>
-              <p class="cart-demo-note"><strong>Entwicklungsphase:</strong> Alle Preise und Lieferzeiten sind Beispiele. Ein Demo-Abschluss ist möglich, aber keine echte Bestellung, Verarbeitung oder Zahlung.</p>
-              <button type="button" id="cartDemoStart" class="cart-demo-cta" disabled>Demo-Bestellung abschließen</button>
+              <p class="cart-demo-note">Nur Vorschau: Preise und Lieferzeiten sind unverbindlich. Aktuell keine echten Bestellungen.</p>
+              <button type="button" id="cartDemoStart" class="cart-demo-cta" disabled>Weiter zum Abschluss</button>
               </div>
               <div id="cartDemoCheckout" class="cart-demo-panel" hidden>
-                <h4>Dein Demo-Bestellabschluss</h4>
-                <p>Prüfe deine Zusammenfassung. Dies ist ausschließlich ein Funktionstest – es werden keine Kundendaten benötigt oder übertragen.</p>
-                <div id="cartDemoSummary" class="cart-demo-summary"></div>
-                <p class="cart-demo-note"><strong>Wichtig:</strong> MONTMORY befindet sich in der Entwicklung. Diese Demo-Bestellung wird nicht an MONTMORY gesendet, nicht bearbeitet und nicht produziert. Es entsteht kein Kaufvertrag und keine Zahlungspflicht.</p>
-                <label><input id="cartDemoConsent" type="checkbox"> Ich habe verstanden, dass dies nur eine Simulation ist und keine echte Bestellung ausgelöst wird.</label>
-                <div class="cart-demo-actions"><button type="button" id="cartDemoBack" class="review-cancel">Zurück zum Rucksack</button><button type="button" id="cartDemoConfirm" class="cart-demo-cta" disabled>Demo-Abschluss bestätigen</button></div>
+                <h4>Deine Angaben</h4>
+                <p>Für den späteren Bestellablauf. Die Angaben werden in dieser Demo nicht versendet oder gespeichert.</p>
+                <form id="cartCustomerForm" class="cart-customer-form">
+                  <div class="cart-form-grid">
+                    <label>Vor- und Nachname *<input id="cartCustomerName" name="name" autocomplete="name" required maxlength="120" placeholder="Vor- und Nachname"></label>
+                    <label>E-Mail *<input id="cartCustomerEmail" name="email" type="email" autocomplete="email" required maxlength="180" placeholder="name@beispiel.de"></label>
+                    <label>Straße und Hausnummer *<input id="cartCustomerStreet" name="street-address" autocomplete="street-address" required maxlength="180" placeholder="Musterstraße 12"></label>
+                    <div class="cart-form-grid cart-form-city">
+                      <label>PLZ *<input id="cartCustomerZip" name="postal-code" autocomplete="postal-code" required maxlength="16" placeholder="12345"></label>
+                      <label>Ort *<input id="cartCustomerCity" name="address-level2" autocomplete="address-level2" required maxlength="100" placeholder="Musterstadt"></label>
+                    </div>
+                    <label>Land *<input id="cartCustomerCountry" name="country-name" autocomplete="country-name" required maxlength="100" value="Deutschland"></label>
+                  </div>
+                  <h4>Deine Zusammenfassung</h4>
+                  <div id="cartDemoSummary" class="cart-demo-summary"></div>
+                  <p class="cart-demo-note">MONTMORY ist noch in Entwicklung. Dies ist nur ein Test: keine Übermittlung, keine Bestellung, keine Lieferung und keine Zahlung.</p>
+                  <label class="cart-consent"><input id="cartDemoConsent" type="checkbox" required> Ich habe verstanden, dass der Demo-Abschluss keine echte Bestellung auslöst.</label>
+                  <div class="cart-demo-actions"><button type="button" id="cartDemoBack" class="review-cancel">Zurück</button><button type="submit" id="cartDemoConfirm" class="cart-demo-cta">Demo-Abschluss bestätigen</button></div>
+                </form>
               </div>
               <div id="cartDemoSuccess" class="cart-demo-panel" hidden>
                 <div class="cart-demo-success-icon" aria-hidden="true">✓</div><h4>Demo erfolgreich abgeschlossen</h4>
                 <p>Du hast den Bestellablauf getestet. <strong>Es wurde keine Bestellung übermittelt oder angenommen.</strong> Es erfolgt keine Herstellung und keine Zahlung.</p>
-                <p>Deine Trail Marks bleiben im Rucksack gespeichert und können weiterbearbeitet werden.</p>
+                <p>Deine Trail Marks bleiben im Rucksack. Die eingegebenen Kontaktdaten wurden nicht gespeichert oder versendet.</p>
                 <button type="button" id="cartDemoReturn" class="cart-demo-cta">Zurück zum Rucksack</button>
               </div>
               <p id="cartStatus" role="status" aria-live="polite"></p>
@@ -392,7 +419,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=118"></script>
+  <script src="./montmory-cart.js?v=119"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>

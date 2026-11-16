@@ -88,19 +88,19 @@
       const marks=await all();if(!marks.length)return;
       const summary=$('cartDemoSummary');summary.replaceChildren();
       addText(summary,'strong',`${marks.length} Trail Mark${marks.length===1?'':'s'}`);
-      for(const mark of marks)addText(summary,'div',`1 × ${mark.title||'Mein Trail Mark'}`);
       addText(summary,'div',`Beispiel-Warenwert: ${euro(marks.length*14.9)} – ${euro(marks.length*19.9)}`);
-      addText(summary,'div','Versandkosten: noch nicht festgelegt');
-      addText(summary,'div','Beispiel-Lieferzeit nach Verkaufsstart: 7–14 Werktage');
-      $('cartDemoConsent').checked=false;$('cartDemoConfirm').disabled=true;
+      addText(summary,'div','Versand noch offen · Lieferzeit beispielhaft 7–14 Werktage');
+      $('cartDemoConsent').checked=false;
       showCartView('checkout');dialog.scrollTop=0;
     }catch(e){setStatus('Demo konnte nicht geöffnet werden: '+e.message);}
   });
-  $('cartDemoConsent')?.addEventListener('change',()=>{$('cartDemoConfirm').disabled=!$('cartDemoConsent').checked;});
   $('cartDemoBack')?.addEventListener('click',()=>showCartView('main'));
-  $('cartDemoConfirm')?.addEventListener('click',()=>{
-    if(!$('cartDemoConsent').checked)return;
-    // Absichtlich KEIN fetch, mailto, Zahlungsanbieter oder Order-Export.
+  $('cartCustomerForm')?.addEventListener('submit',e=>{
+    e.preventDefault();
+    const form=$('cartCustomerForm');
+    if(!form.reportValidity())return;
+    // Keine Speicherung oder Übermittlung persönlicher Angaben.
+    form.reset();
     showCartView('success');dialog.scrollTop=0;
   });
   $('cartDemoReturn')?.addEventListener('click',()=>{showCartView('main');render().catch(e=>setStatus(e.message));});
@@ -120,13 +120,10 @@
     if($('cartDemoStart'))$('cartDemoStart').disabled=marks.length===0;
     if(marks.length){
       const totals=$('cartTotals');totals.replaceChildren();
-      addText(totals,'h4','Unverbindliche Preisübersicht');
-      addText(totals,'p',`${marks.length} × Trail Mark · je 14,90–19,90 € (Beispielpreise)`);
-      const total=addText(totals,'p',`Beispiel-Warenwert: ${euro(marks.length*14.9)} bis ${euro(marks.length*19.9)}`);total.className='cart-total-value';
-      addText(totals,'p','Versandkosten: noch nicht festgelegt');
-      addText(totals,'p','Endpreis inklusive Versand: derzeit nicht berechenbar');
-      addText(totals,'p','Mögliche Lieferzeit nach Verkaufsstart: 7–14 Werktage (unverbindliche Schätzung)');
-      addText(totals,'p','MONTMORY ist noch in Entwicklung. Der Demo-Abschluss löst keine Bestellung oder Zahlung aus.');
+      addText(totals,'h4','Deine Preisübersicht');
+      addText(totals,'p',`${marks.length} × Trail Mark · je 14,90–19,90 €`);
+      const total=addText(totals,'p',`Zusammen: ${euro(marks.length*14.9)} – ${euro(marks.length*19.9)}`);total.className='cart-total-value';
+      addText(totals,'p','Versand noch offen · Lieferzeit ca. 7–14 Werktage (Beispiel)');
     }
     for(const mark of marks){
       const article=document.createElement('article');article.className='cart-item';
@@ -134,7 +131,7 @@
       addText(head,'h4',mark.title||'Mein Trail Mark');addText(head,'span','1 × Trail Mark');article.append(head);
       addText(article,'p',`${mark.km||'–'} · ${mark.hm||'–'} · ${mark.date||'–'}`);
       const itemPrice=addText(article,'p','Beispielpreis pro Trail Mark: 14,90–19,90 €');itemPrice.className='cart-item-price';
-      if(mark.destination)addText(article,'p','Zielort: '+mark.destination);
+
       const imgs=document.createElement('div');imgs.className='cart-item-images';
       for(const [label,svg] of [['Vorderseite',mark.front],['Rückseite',mark.back]]){
         const figure=document.createElement('figure');figure.style.margin='0';
