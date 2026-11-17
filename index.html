@@ -525,5 +525,35 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
     if (tools) tools.hidden = true;
   }
 </script>
+
+<!-- V130: Nach erfolgreichem GPX-Import automatisch zu Schritt 2 wechseln. -->
+<script id="montmory-v130-auto-step2">
+(function(){
+  function init(){
+    const input=document.getElementById('gpxFile');
+    const status=document.getElementById('status');
+    const step2=document.querySelector('[data-wizard-go="2"]');
+    if(!input||!status||!step2)return;
+    let waiting=false;
+    input.addEventListener('change',function(){waiting=!!input.files?.length;});
+    const observer=new MutationObserver(function(){
+      if(!waiting)return;
+      const message=(status.textContent||'').trim();
+      if(message.startsWith('Fehler:')){waiting=false;return;}
+      if(!message.includes('erfolgreich geladen'))return;
+      waiting=false;
+      step2.click();
+      // Auch auf Smartphones direkt zum Gestaltungsbereich springen.
+      requestAnimationFrame(function(){
+        const section=document.querySelector('[data-wizard-step="2"]');
+        if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+    observer.observe(status,{childList:true,characterData:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>
 </body>
 </html>
