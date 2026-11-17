@@ -137,6 +137,16 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   });
 })();
 </script>
+<style id="montmory-v124-cart-controls">
+.cart-bottom-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.cart-bottom-actions button{flex:1 1 200px;min-height:44px}
+#cartClearAll{color:#884e43;border:1px solid #d9b8ad;background:#fffefa;border-radius:12px}
+.cart-quantity-row{margin:13px 0 8px}
+.cart-quantity-row label{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.91rem;font-weight:600;color:#344b3e}
+.cart-quantity-select{min-height:42px;min-width:120px;padding:8px 12px;border:1px solid #cbd3c8;border-radius:11px;background:#fff;color:#294a3c;font:inherit}
+.upload-card[data-wizard-step="1"]{scroll-margin-top:90px}
+@media(max-width:600px){.cart-bottom-actions{flex-direction:column;align-items:stretch}.cart-bottom-actions button{flex:auto;width:100%}}
+</style>
 </head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
@@ -151,7 +161,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
               <p id="cartEmpty">Noch keine Trail Marks gespeichert. Erstelle zunächst eine unverbindliche Übersicht.</p>
               <div id="cartItems" class="cart-items"></div>
               <div id="cartTotals" class="cart-totals" hidden></div>
-              <button type="button" id="cartNewMark" class="primary-button" hidden>+ Weiteren Trail Mark gestalten</button>
+              <div class="cart-bottom-actions"><button type="button" id="cartNewMark" class="primary-button" hidden>+ Weiteren Trail Mark gestalten</button><button type="button" id="cartClearAll" class="review-cancel" hidden>Rucksack komplett leeren</button></div>
               <p class="cart-demo-note">Nur Vorschau: Preise und Lieferzeiten sind unverbindlich. Aktuell keine echten Bestellungen.</p>
               <button type="button" id="cartDemoStart" class="cart-demo-cta" disabled>Weiter zum Abschluss</button>
               </div>
@@ -434,7 +444,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=121"></script>
+  <script src="./montmory-cart.js?v=124"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>

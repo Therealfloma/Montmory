@@ -24,6 +24,9 @@
   const put=x=>transaction('readwrite',s=>s.put(x));
   const del=id=>transaction('readwrite',s=>s.delete(id));
   const get=id=>transaction('readonly',s=>s.get(id));
+  const clearAll=()=>transaction('readwrite',s=>s.clear());
+  const qty=m=>Math.max(1,Math.min(99,Number.parseInt(m.quantity,10)||1));
+  const units=marks=>marks.reduce((sum,m)=>sum+qty(m),0);
   const dialog=$('montmoryCart'),backdrop=$('cartBackdrop'),pack=$('montmoryPackShortcut');
   let previousFocus=null;
   let currentMarkSaved=false;
@@ -87,8 +90,8 @@
     try{
       const marks=await all();if(!marks.length)return;
       const summary=$('cartDemoSummary');summary.replaceChildren();
-      addText(summary,'strong',`${marks.length} Trail Mark${marks.length===1?'':'s'}`);
-      addText(summary,'div',`Beispiel-Warenwert: ${euro(marks.length*14.9)} – ${euro(marks.length*19.9)}`);
+      addText(summary,'strong',`${units(marks)} Trail Mark${units(marks)===1?'':'s'}`);
+      addText(summary,'div',`Beispiel-Warenwert: ${euro(units(marks)*14.9)} – ${euro(units(marks)*19.9)}`);
       addText(summary,'div','Versand noch offen · Lieferzeit beispielhaft 7–14 Werktage');
       $('cartDemoConsent').checked=false;
       showCartView('checkout');dialog.scrollTop=0;
@@ -108,30 +111,45 @@
   function addText(el,tag,value){const child=document.createElement(tag);child.textContent=value;el.append(child);return child;}
   async function render(){
     const marks=(await all()).sort((a,b)=>a.created-b.created),list=$('cartItems');list.replaceChildren();
-    $('cartCount').textContent=`(${marks.length})`;
+    const count=units(marks);
+    $('cartCount').textContent=`(${count})`;
     const packCount=$('montmoryPackCount'),packButton=$('montmoryPackShortcut');
-    if(packCount)packCount.textContent=marks.length>99?'99+':String(marks.length);
+    if(packCount)packCount.textContent=count>99?'99+':String(count);
     if(packButton)packButton.setAttribute('aria-label',`Rucksack öffnen: ${marks.length} Trail Mark${marks.length===1?'':'s'} gespeichert`);
 
     syncNewMarkButtons();
     $('cartEmpty').hidden=marks.length>0;
-    $('cartNewMark').hidden=marks.length===0;
+    $('cartNewMark').hidden=marks.length===0 || !currentMarkSaved;
+    if($('cartClearAll'))$('cartClearAll').hidden=marks.length===0;
     $('cartTotals').hidden=marks.length===0;
     if($('cartDemoStart'))$('cartDemoStart').disabled=marks.length===0;
     if(marks.length){
       const totals=$('cartTotals');totals.replaceChildren();
       addText(totals,'h4','Deine Preisübersicht');
-      addText(totals,'p',`${marks.length} × Trail Mark · je 14,90–19,90 €`);
-      const total=addText(totals,'p',`Zusammen: ${euro(marks.length*14.9)} – ${euro(marks.length*19.9)}`);total.className='cart-total-value';
+      addText(totals,'p',`${count} × Trail Mark · je 14,90–19,90 €`);
+      const total=addText(totals,'p',`Zusammen: ${euro(units(marks)*14.9)} – ${euro(units(marks)*19.9)}`);total.className='cart-total-value';
       addText(totals,'p','Versand noch offen · Lieferzeit ca. 7–14 Werktage (Beispiel)');
     }
     for(const mark of marks){
       const article=document.createElement('article');article.className='cart-item';
       const head=document.createElement('div');head.className='cart-item-header';
-      addText(head,'h4',mark.title||'Mein Trail Mark');addText(head,'span','1 × Trail Mark');article.append(head);
+      addText(head,'h4',mark.title||'Mein Trail Mark');addText(head,'span',`${qty(mark)} × Trail Mark`);article.append(head);
       addText(article,'p',`${mark.km||'–'} · ${mark.hm||'–'} · ${mark.date||'–'}`);
       const itemPrice=addText(article,'p','Beispielpreis pro Trail Mark: 14,90–19,90 €');itemPrice.className='cart-item-price';
 
+      const quantityRow=document.createElement('div');quantityRow.className='cart-quantity-row';
+      const quantityLabel=document.createElement('label');quantityLabel.textContent='Anzahl dieser Konfiguration';
+      const quantitySelect=document.createElement('select');quantitySelect.className='cart-quantity-select';
+      quantitySelect.setAttribute('aria-label',`Anzahl für ${mark.title||'Trail Mark'}`);
+      for(let n=1;n<=10;n++){const option=document.createElement('option');option.value=String(n);option.textContent=`${n} Stück`;quantitySelect.append(option);}
+      if(qty(mark)>10){const option=document.createElement('option');option.value=String(qty(mark));option.textContent=`${qty(mark)} Stück`;quantitySelect.append(option);}
+      quantitySelect.value=String(qty(mark));
+      quantitySelect.addEventListener('change',async()=>{
+        quantitySelect.disabled=true;
+        try{const latest=await get(mark.id);if(!latest)return;latest.quantity=Number(quantitySelect.value);await put(latest);await render();setStatus('Stückzahl aktualisiert.');}
+        catch(e){quantitySelect.disabled=false;setStatus('Stückzahl konnte nicht gespeichert werden: '+e.message);}
+      });
+      quantityLabel.append(quantitySelect);quantityRow.append(quantityLabel);article.append(quantityRow);
       const imgs=document.createElement('div');imgs.className='cart-item-images';
       for(const [label,svg] of [['Vorderseite',mark.front],['Rückseite',mark.back]]){
         const figure=document.createElement('figure');figure.style.margin='0';
@@ -210,6 +228,7 @@
       const editingId=sessionStorage.getItem('montmory-cart-edit-id');
       const oldMark=editingId?await get(editingId):null;
       const mark={id:oldMark?.id||crypto.randomUUID?.()||String(Date.now())+'-'+Math.random(),created:oldMark?.created||Date.now(),
+        quantity:oldMark?qty(oldMark):1,
         gpxName:gpx.name,gpxText:await gpx.text(),
         config:{
           title:$('titleInput')?.value,distance:$('distanceInput')?.value,gain:$('gainInput')?.value,
@@ -235,7 +254,26 @@
       return;
     }
     // Neustart setzt alle alten GPX- und Formulardaten sicher zurück; IndexedDB-Warenkorb bleibt erhalten.
-    sessionStorage.removeItem('montmory-cart-edit-id');window.location.href=window.location.pathname+'#konfigurator';window.location.reload();
+    sessionStorage.removeItem('montmory-cart-edit-id');sessionStorage.setItem('montmory-new-mark-step1','1');window.location.href=window.location.pathname+window.location.search+'#konfigurator';window.location.reload();
+  }
+  $('cartClearAll')?.addEventListener('click',async()=>{
+    if(!confirm('Wirklich alle Trail Marks aus dem Rucksack entfernen? Diese Aktion kann nicht rückgängig gemacht werden.'))return;
+    const button=$('cartClearAll');button.disabled=true;
+    try{await clearAll();sessionStorage.removeItem('montmory-cart-edit-id');markUnsaved();await render();setStatus('Dein Rucksack wurde vollständig geleert.');}
+    catch(e){setStatus('Rucksack konnte nicht geleert werden: '+e.message);}
+    finally{button.disabled=false;}
+  });
+  // Mobile: nach einem neuen Mark immer den GPX-Upload in Schritt 1 zeigen.
+  if(sessionStorage.getItem('montmory-new-mark-step1')==='1'){
+    sessionStorage.removeItem('montmory-new-mark-step1');
+    window.addEventListener('load',()=>{
+      const go=()=>{
+        document.querySelector('[data-wizard-go="1"]')?.click();
+        const upload=document.querySelector('.upload-card[data-wizard-step="1"]');
+        if(upload){upload.scrollIntoView({behavior:'auto',block:'start'});}
+      };
+      requestAnimationFrame(()=>requestAnimationFrame(go));
+    },{once:true});
   }
   $('cartNewMark')?.addEventListener('click',newMark);
   $('newMarkFromStep3')?.addEventListener('click',newMark);
