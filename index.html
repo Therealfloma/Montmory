@@ -258,6 +258,47 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
 @media(max-width:700px){.shop-product > img{height:260px}.montmory-board-choice img{height:185px}.montmory-starter-marks img{height:155px}}
 @media(max-width:420px){.montmory-board-choice img{height:160px}}
 </style>
+<style>
+
+/* V142: MONTMORY Rucksack – feine Akzente, klare Hierarchie */
+#montmoryCart{background:#faf8f3}
+#montmoryCart .montmory-cart-head{position:relative;padding-left:17px}
+#montmoryCart .montmory-cart-head:before{content:"";position:absolute;left:0;top:4px;bottom:19px;width:3px;background:#bb9263}
+#montmoryCart .cart-item,#montmoryCart .shop-cart-product{position:relative;padding:22px 0 24px;border-bottom:1px solid #dcd8cd}
+#montmoryCart .cart-item:before,#montmoryCart .shop-cart-product:before{content:"";position:absolute;left:0;top:0;width:42px;height:2px;background:#bd986e}
+#montmoryCart .cart-item-header h4{font-size:clamp(1.24rem,3vw,1.5rem)}
+#montmoryCart .cart-item-header span{color:#375747;border:1px solid #d7dfd3;padding:4px 9px;background:#f0f3ed;border-radius:2px;font-weight:650}
+#montmoryCart .cart-item-meta{margin-top:4px;color:#66736b}
+#montmoryCart .cart-item-images{gap:10px;margin:15px 0}
+#montmoryCart .cart-item-images figure{background:#f0ece4;border:1px solid #e1d9ca;padding:11px 8px 8px;transition:border-color .2s ease}
+#montmoryCart .cart-item-images figure:hover{border-color:#af997c}
+#montmoryCart .cart-item-images figcaption{font-size:.68rem;font-weight:650}
+#montmoryCart .cart-quantity-row{margin:14px 0}
+#montmoryCart .cart-quantity-row label{gap:10px}
+#montmoryCart .cart-quantity-select:focus-visible,#montmoryCart button:focus-visible{outline:2px solid #bc9365;outline-offset:3px}
+#montmoryCart .cart-item-actions button{transition:color .2s ease}
+#montmoryCart .cart-item-actions button:hover{color:#a2764b}
+#montmoryCart .montmory-bundle-item>h4{font:500 1.5rem/1.25 Georgia,serif;color:#253f32;margin:8px 0 6px}
+#montmoryCart .montmory-bundle-item>.cart-item-price{display:block!important;color:#7b6b56;font-size:.85rem;margin:0 0 12px!important}
+#montmoryCart .montmory-bundle-item>.montmory-bundle-part{border-top:1px solid #e3dfd4;padding:16px 0 12px}
+#montmoryCart .montmory-bundle-part h5{font:600 1rem/1.3 system-ui,sans-serif;color:#284535;margin:0 0 5px}
+#montmoryCart .montmory-bundle-part p{color:#738075;font-size:.83rem;margin:0 0 8px}
+#montmoryCart .montmory-bundle-part .cart-item-images{margin:8px 0 10px;max-width:440px}
+#montmoryCart .montmory-bundle-part .cart-item-images img{height:120px;max-height:120px}
+#montmoryCart .montmory-bundle-part>.review-cancel,#montmoryCart .montmory-bundle-item>.review-cancel{border:0;background:transparent;padding:6px 0;color:#42624e;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:.84rem}
+#montmoryCart .montmory-bundle-item>.review-cancel{color:#946e62}
+#montmoryCart .shop-cart-product h4{font-size:1.4rem;color:#263f32}
+#montmoryCart .shop-cart-product select{min-height:38px;background:#fffefa;border:1px solid #cdd3c7;padding:6px 10px;color:#284535;margin-right:16px}
+#montmoryCart .cart-totals{padding:20px 18px!important;background:#eeeee5!important;border:1px solid #dedfd2!important;margin:22px 0!important}
+#montmoryCart #cartTotals h4{font-size:1.35rem;margin-bottom:12px}
+#montmoryCart #cartTotals p{line-height:1.5}
+#montmoryCart #cartTotals .cart-total-value{font-size:clamp(1.45rem,4vw,1.85rem);margin-top:14px;padding-top:14px;border-color:#c7d0c3}
+#montmoryCart .cart-demo-cta{transition:background .2s ease,transform .2s ease}
+#montmoryCart .cart-demo-cta:hover:not(:disabled){transform:translateY(-1px)}
+#montmoryCart #cartNewMark:hover{background:#e9eee7}
+@media(max-width:600px){#montmoryCart .cart-totals{padding:16px!important}#montmoryCart .cart-item-images img{height:132px;max-height:132px}#montmoryCart .montmory-bundle-part .cart-item-images img{height:110px;max-height:110px}}
+@media(prefers-reduced-motion:reduce){#montmoryCart *{transition:none!important}}
+</style>
 </head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">

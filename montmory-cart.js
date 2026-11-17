@@ -188,11 +188,11 @@
     if($('cartDemoStart'))$('cartDemoStart').disabled=marks.length===0&&shopBoard()===0;
     if(marks.length||shopBoard()){
       const totals=$('cartTotals');totals.replaceChildren();
-      addText(totals,'h4','Zusammenfassung');
+      addText(totals,'h4','Deine Auswahl');
       addText(totals,'p',`${units(marks)} × Trail Mark · ${boardCount(marks)} × Sammelboard`);
       if(boardCount(marks))addText(totals,'p',boardDescription(marks));
       const [low,high]=cartPrice(marks);const total=addText(totals,'p',`${euro(low)} – ${euro(high)}`);total.className='cart-total-value';
-      addText(totals,'p','Unverbindliche Beispielpreise · Versand noch offen');
+      addText(totals,'p','Beispielpreise · Versand wird später festgelegt');
     }
     if(shopBoard()){
       const article=document.createElement('article');article.className='shop-cart-product';
