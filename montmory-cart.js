@@ -28,12 +28,18 @@
   const SHOP_KEY='montmory-shop-board-v1';
   const BOARD_TITLE_KEY='montmory-shop-board-title-v1';
   const BOARD_STYLE_KEY='montmory-shop-board-style-v1';
+  const STARTER_STYLE_KEY='montmory-shop-starter-board-style-v1';
+  const STARTER_TITLE_KEY='montmory-shop-starter-board-title-v1';
   const boardStyle=()=>localStorage.getItem(BOARD_STYLE_KEY)==='kompass'?'kompass':'berge';
   const setBoardStyle=value=>localStorage.setItem(BOARD_STYLE_KEY,value==='kompass'?'kompass':'berge');
+  const starterStyle=()=>localStorage.getItem(STARTER_STYLE_KEY)==='kompass'?'kompass':'berge';
+  const setStarterStyle=value=>localStorage.setItem(STARTER_STYLE_KEY,value==='kompass'?'kompass':'berge');
   const boardStyleName=value=>value==='kompass'?'Kompass & Weltkarte':'Bergpanorama';
   const cleanBoardTitle=value=>String(value||'').trim().replace(/\s+/g,' ').slice(0,55);
   const boardTitle=()=>cleanBoardTitle(localStorage.getItem(BOARD_TITLE_KEY))||'Meine Abenteuer';
   const setBoardTitle=value=>localStorage.setItem(BOARD_TITLE_KEY,cleanBoardTitle(value)||'Meine Abenteuer');
+  const starterTitle=()=>cleanBoardTitle(localStorage.getItem(STARTER_TITLE_KEY))||'Meine Abenteuer';
+  const setStarterTitle=value=>localStorage.setItem(STARTER_TITLE_KEY,cleanBoardTitle(value)||'Meine Abenteuer');
   const shopBoard=()=>Math.max(0,Math.min(10,Number(localStorage.getItem(SHOP_KEY))||0));
   const setShopBoard=n=>localStorage.setItem(SHOP_KEY,String(Math.max(0,Math.min(10,n))));
   const pendingKey='montmory-shop-pending-v1';
@@ -402,7 +408,7 @@
     if(existingDraft && existingDraft.kind!==kind && !confirm('Du gestaltest gerade ein Paket. Wenn du ein anderes Produkt auswählst, wird die laufende Paketgestaltung unterbrochen. Fortfahren?'))return;
     if(kind==='starter'||kind==='triple'){
       const existing=activeBundle();
-      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0,boardTitle:kind==='starter'?boardTitle():null,boardStyle:kind==='starter'?boardStyle():null});}
+      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0,boardTitle:kind==='starter'?starterTitle():null,boardStyle:kind==='starter'?starterStyle():null});}
     }else setPending(null);
     bundleHint();
     document.querySelector('[data-wizard-go="1"]')?.click();
@@ -410,22 +416,32 @@
     const label=kind==='starter'?'Starterpaket: Gestalte drei unterschiedliche Trail Marks, jeweils mit eigener GPX-Datei.':kind==='triple'?'3er-Set: Gestalte drei unterschiedliche Trail Marks.':'Gestalte deinen Trail Mark.';
     const el=$('shopStatus');if(el)el.textContent=label;
   }));
-  // Das Sammelboard und das Starterpaket teilen sich die individuell gravierte Überschrift.
+  // Beide Produkte haben eigene, voneinander unabhängige Board-Motive und Überschriften.
   const boardShopCard=document.querySelector('[data-shop-board]')?.closest('.shop-product-body');
-  if(boardShopCard){
+  const starterShopCard=document.querySelector('[data-shop-config="starter"]')?.closest('.shop-product-body');
+  function addTitleField(card,getTitle,setTitle,help){
+    if(!card)return;
     const field=document.createElement('label');field.className='montmory-board-title-field';field.textContent='Deine Überschrift auf dem Board';
-    const input=document.createElement('input');input.type='text';input.maxLength=55;input.placeholder='z. B. Meine Gipfelmomente';input.value=boardTitle();
-    const hint=document.createElement('small');hint.textContent='Bis zu 55 Zeichen · auch für dein Starterpaket';
-    input.addEventListener('input',()=>setBoardTitle(input.value));field.append(input,hint);
-    boardShopCard.insertBefore(field,boardShopCard.querySelector('.shop-bottom'));
+    const input=document.createElement('input');input.type='text';input.maxLength=55;input.placeholder='z. B. Meine Gipfelmomente';input.value=getTitle();
+    const hint=document.createElement('small');hint.textContent=help;
+    input.addEventListener('input',()=>setTitle(input.value));field.append(input,hint);
+    card.insertBefore(field,card.querySelector('.shop-bottom'));
   }
+  addTitleField(boardShopCard,boardTitle,setBoardTitle,'Für dein einzelnes Sammelboard');
+  addTitleField(starterShopCard,starterTitle,setStarterTitle,'Für das Board in deinem Starterpaket');
   document.querySelectorAll('[data-board-choices]').forEach(fieldset=>{
+    const isStarter=!!fieldset.querySelector('input[name="board-starter"]');
+    const getStyle=isStarter?starterStyle:boardStyle;
+    const saveStyle=isStarter?setStarterStyle:setBoardStyle;
     const radios=[...fieldset.querySelectorAll('input[type=radio]')];
-    radios.forEach(r=>{r.checked=r.value===boardStyle();r.addEventListener('change',()=>{
-      if(!r.checked)return;
-      setBoardStyle(r.value);
-      document.querySelectorAll('[data-board-choices] input[type=radio]').forEach(other=>{other.checked=other.value===r.value;});
-    });});
+    radios.forEach(r=>{
+      r.checked=r.value===getStyle();
+      r.addEventListener('change',()=>{
+        if(!r.checked)return;
+        saveStyle(r.value);
+        // Absichtlich nur die Auswahl im aktuellen Produkt aktualisieren.
+      });
+    });
   });
   document.querySelector('[data-shop-board]')?.addEventListener('click',()=>{
     setShopBoard(shopBoard()+1);render().catch(e=>setStatus(e.message));
