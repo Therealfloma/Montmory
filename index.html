@@ -561,7 +561,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=126"></script>
+  <script src="./montmory-cart.js?v=139"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>
@@ -608,6 +608,24 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
   else init();
+})();
+</script>
+<script id="montmory-v139-board-reveal">
+(function(){
+  function init(){
+    document.querySelectorAll('[data-shop-board], [data-shop-config="starter"]').forEach(function(button){
+      button.addEventListener('click',function(event){
+        var card=button.closest('.shop-product-body');
+        var choices=card&&card.querySelector('[data-board-choices]');
+        if(!choices || !choices.hidden)return;
+        event.stopImmediatePropagation();
+        choices.hidden=false;
+        button.innerHTML=(button.hasAttribute('data-shop-board')?'In den Rucksack legen':'Drei Marks gestalten')+' <span aria-hidden="true">→</span>';
+        choices.scrollIntoView({behavior:'smooth',block:'nearest'});
+      },true);
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>

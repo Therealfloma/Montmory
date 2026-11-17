@@ -394,6 +394,8 @@
   }
   $('cartNewMark')?.addEventListener('click',newMark);
   $('newMarkFromStep3')?.addEventListener('click',newMark);
+  const boardShopCard=document.querySelector('[data-shop-board]')?.closest('.shop-product-body');
+  const starterShopCard=document.querySelector('[data-shop-config="starter"]')?.closest('.shop-product-body');
   document.querySelectorAll('[data-shop-config]').forEach(button=>button.addEventListener('click',()=>{
     const kind=button.dataset.shopConfig;
     if(kind==='starter'){
@@ -417,8 +419,6 @@
     const el=$('shopStatus');if(el)el.textContent=label;
   }));
   // Beide Produkte haben eigene, voneinander unabhängige Board-Motive und Überschriften.
-  const boardShopCard=document.querySelector('[data-shop-board]')?.closest('.shop-product-body');
-  const starterShopCard=document.querySelector('[data-shop-config="starter"]')?.closest('.shop-product-body');
   document.querySelectorAll('[data-board-choices]').forEach(fieldset=>{
     const isStarter=!!fieldset.querySelector('input[name="board-starter"]');
     const getStyle=isStarter?starterStyle:boardStyle;
