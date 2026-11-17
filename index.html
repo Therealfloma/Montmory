@@ -147,6 +147,49 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
 .upload-card[data-wizard-step="1"]{scroll-margin-top:90px}
 @media(max-width:600px){.cart-bottom-actions{flex-direction:column;align-items:stretch}.cart-bottom-actions button{flex:auto;width:100%}}
 </style>
+
+<style id="montmory-v125-editorial-cart">
+/* MONTMORY: ruhige, handwerkliche Gestaltung statt verschachtelter UI-Karten */
+#montmoryCart{max-width:760px;inset:3vh max(12px,calc((100vw - 760px)/2));max-height:94vh;padding:clamp(20px,4vw,42px);background:#f8f6f0;border:1px solid #dcd8cc;border-radius:5px;box-shadow:0 24px 75px #12231b45;color:#263b31}
+#montmoryCart .montmory-cart-head{align-items:center;border-bottom:1px solid #cfcfc3;padding-bottom:20px;margin-bottom:24px}
+#montmoryCart .montmory-cart-head h3{font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.75rem,4vw,2.3rem);font-weight:500;letter-spacing:-.035em;color:#203d30}
+#montmoryCart #cartCount{font:400 .85rem/1.4 system-ui,sans-serif;color:#687368;letter-spacing:0;vertical-align:middle;margin-left:7px}
+#montmoryCart #cartClose{font-size:.84rem;border:0;background:none;padding:9px 0;color:#53655b;font-weight:500}
+#montmoryCart #cartClose:hover{text-decoration:underline}
+#montmoryCart .cart-items{gap:0}
+#montmoryCart .cart-item{border:0;border-bottom:1px solid #d9d8ce;border-radius:0;box-shadow:none;background:transparent;padding:22px 0 26px}
+#montmoryCart .cart-item:first-child{padding-top:0}
+#montmoryCart .cart-item-header{align-items:baseline;gap:12px}
+#montmoryCart .cart-item-header h4{font-family:Georgia,'Times New Roman',serif;font-size:1.45rem;font-weight:500;letter-spacing:-.02em;margin:0 0 7px;color:#263e32}
+#montmoryCart .cart-item-header span{background:transparent;border-radius:0;padding:0;color:#798176;font-size:.8rem;white-space:nowrap}
+#montmoryCart .cart-item-meta{color:#727c71;font-size:.85rem;letter-spacing:.01em;margin:0 0 16px}
+#montmoryCart .cart-item-images{max-width:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0 18px}
+#montmoryCart .cart-item-images figure{background:#efede5;border:1px solid #e5e1d5;border-radius:3px;padding:13px 8px 8px}
+#montmoryCart .cart-item-images img{height:150px;max-height:150px;width:100%;object-fit:contain;background:transparent;border-radius:0}
+#montmoryCart .cart-item-images figcaption{text-align:center;color:#777d72;font-size:.73rem;letter-spacing:.055em;text-transform:uppercase;margin-top:7px}
+#montmoryCart .cart-item-price{display:none}
+#montmoryCart .cart-quantity-row{margin:0 0 14px}
+#montmoryCart .cart-quantity-row label{font-size:.84rem;font-weight:500;color:#53655a}
+#montmoryCart .cart-quantity-select{border-radius:3px;border:1px solid #cbcfc3;min-height:39px;background:#fbfaf6;padding:6px 12px;color:#203d30;font-size:.9rem}
+#montmoryCart .cart-item-actions{gap:18px;align-items:center}
+#montmoryCart .cart-item-actions button{border:0;border-radius:0;min-height:34px;padding:4px 0;background:transparent;box-shadow:none;font-size:.84rem;font-weight:600;color:#315746;text-decoration:underline;text-underline-offset:4px}
+#montmoryCart .cart-item-actions .review-cancel{color:#8a635c;font-weight:400}
+#montmoryCart .cart-totals{background:transparent;border:0;border-radius:0;margin:12px 0 18px;padding:12px 0}
+#montmoryCart #cartTotals h4{font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:1.25rem;color:#294a3c;margin:0 0 8px}
+#montmoryCart #cartTotals p{margin:6px 0;color:#667368;font-size:.86rem}
+#montmoryCart #cartTotals .cart-total-value{color:#203e30;font-family:Georgia,'Times New Roman',serif;font-size:1.45rem;font-weight:600;border-top:1px solid #d6d7cc;padding-top:13px;margin-top:13px}
+#montmoryCart .cart-bottom-actions{display:flex;gap:12px;margin:6px 0 18px}
+#montmoryCart #cartNewMark{background:transparent;border:1px solid #9aaca0;border-radius:3px;color:#294a3c;box-shadow:none;font-size:.88rem;font-weight:600;padding:12px 16px}
+#montmoryCart #cartClearAll{background:transparent;border:0;border-radius:0;color:#876b63;text-decoration:underline;text-underline-offset:3px;font-size:.83rem;min-height:42px;flex:0 1 auto;padding:8px}
+#montmoryCart .cart-demo-note{background:transparent;border:0;border-left:2px solid #b8b8a6;border-radius:0;padding:4px 0 4px 12px;color:#7a7d70;font-size:.78rem;line-height:1.55;margin:18px 0}
+#montmoryCart .cart-demo-cta{border-radius:3px;background:#244636;color:#fff;box-shadow:none;min-height:52px;font-size:.91rem;letter-spacing:.02em}
+#montmoryCart .cart-demo-cta:hover:not(:disabled){background:#183528}
+#montmoryCart .cart-demo-summary{border-radius:3px;background:#efede5}
+#montmoryCart .cart-form-grid input{border-radius:3px}
+#montmoryCart .cart-demo-panel h4{font-family:Georgia,'Times New Roman',serif;font-weight:500}
+#montmoryCart #cartEmpty{padding:30px 0;color:#6a746b}
+@media(max-width:600px){#montmoryCart{inset:0;max-height:none;border-radius:0;padding:24px 20px calc(32px + env(safe-area-inset-bottom))}#montmoryCart .cart-item-images img{height:125px;max-height:125px}#montmoryCart .cart-bottom-actions{flex-direction:column;align-items:stretch}#montmoryCart #cartClearAll{align-self:flex-start}#montmoryCart .cart-item-header h4{font-size:1.3rem}}
+</style>
 </head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
@@ -158,11 +201,11 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
             <section class="montmory-cart" id="montmoryCart" aria-labelledby="cartTitle" role="dialog" aria-modal="true" tabindex="-1" hidden>
               <div class="montmory-cart-head"><h3 id="cartTitle">Dein Rucksack <span id="cartCount">(0)</span></h3><button type="button" id="cartClose" class="review-cancel" aria-label="Rucksack schließen">✕ Schließen</button></div>
               <div id="cartMainView">
-              <p id="cartEmpty">Noch keine Trail Marks gespeichert. Erstelle zunächst eine unverbindliche Übersicht.</p>
+              <p id="cartEmpty">Dein Rucksack ist noch leer. Gestalte deinen ersten Trail Mark.</p>
               <div id="cartItems" class="cart-items"></div>
               <div id="cartTotals" class="cart-totals" hidden></div>
-              <div class="cart-bottom-actions"><button type="button" id="cartNewMark" class="primary-button" hidden>+ Weiteren Trail Mark gestalten</button><button type="button" id="cartClearAll" class="review-cancel" hidden>Rucksack komplett leeren</button></div>
-              <p class="cart-demo-note">Nur Vorschau: Preise und Lieferzeiten sind unverbindlich. Aktuell keine echten Bestellungen.</p>
+              <div class="cart-bottom-actions"><button type="button" id="cartNewMark" class="primary-button" hidden>Weiteren Trail Mark gestalten</button><button type="button" id="cartClearAll" class="review-cancel" hidden>Alle entfernen</button></div>
+              <p class="cart-demo-note">MONTMORY befindet sich in Entwicklung. Der Abschluss ist eine Demo ohne Bestellung oder Zahlung.</p>
               <button type="button" id="cartDemoStart" class="cart-demo-cta" disabled>Weiter zum Abschluss</button>
               </div>
               <div id="cartDemoCheckout" class="cart-demo-panel" hidden>
@@ -309,7 +352,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
               </div>
               <button type="button" id="addMarkToCart" class="primary-button">In den Warenkorb legen</button>
             </div>
-            <div class="step3-next-actions"><button type="button" id="newMarkFromStep3" class="review-cancel" hidden>+ Weiteren Trail Mark gestalten</button></div>
+            <div class="step3-next-actions"><button type="button" id="newMarkFromStep3" class="review-cancel" hidden>Weiteren Trail Mark gestalten</button></div>
 
           </div>
         </section>

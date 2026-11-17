@@ -125,16 +125,16 @@
     if($('cartDemoStart'))$('cartDemoStart').disabled=marks.length===0;
     if(marks.length){
       const totals=$('cartTotals');totals.replaceChildren();
-      addText(totals,'h4','Deine Preisübersicht');
+      addText(totals,'h4','Zusammenfassung');
       addText(totals,'p',`${count} × Trail Mark · je 14,90–19,90 €`);
-      const total=addText(totals,'p',`Zusammen: ${euro(units(marks)*14.9)} – ${euro(units(marks)*19.9)}`);total.className='cart-total-value';
-      addText(totals,'p','Versand noch offen · Lieferzeit ca. 7–14 Werktage (Beispiel)');
+      const total=addText(totals,'p',`${euro(units(marks)*14.9)} – ${euro(units(marks)*19.9)}`);total.className='cart-total-value';
+      addText(totals,'p','Unverbindliche Beispielpreise · Versand noch offen');
     }
     for(const mark of marks){
       const article=document.createElement('article');article.className='cart-item';
       const head=document.createElement('div');head.className='cart-item-header';
       addText(head,'h4',mark.title||'Mein Trail Mark');addText(head,'span',`${qty(mark)} × Trail Mark`);article.append(head);
-      addText(article,'p',`${mark.km||'–'} · ${mark.hm||'–'} · ${mark.date||'–'}`);
+      const meta=addText(article,'p',`${mark.km||'–'} · ${mark.hm||'–'} · ${mark.date||'–'}`);meta.className='cart-item-meta';
       const itemPrice=addText(article,'p','Beispielpreis pro Trail Mark: 14,90–19,90 €');itemPrice.className='cart-item-price';
 
       const quantityRow=document.createElement('div');quantityRow.className='cart-quantity-row';
