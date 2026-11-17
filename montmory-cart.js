@@ -69,6 +69,15 @@
   };
   const qty=m=>Math.max(1,Math.min(99,Number.parseInt(m.quantity,10)||1));
   const units=marks=>marks.reduce((sum,m)=>sum+qty(m),0);
+  // A completed starter bundle includes exactly one board; it is not a separate paid board.
+  const starterBundles=marks=>new Map(marks.filter(m=>m.bundle==='starter'&&m.bundleId).map(m=>[m.bundleId,m.boardStyle||'berge']));
+  const boardCount=marks=>shopBoard()+starterBundles(marks).size;
+  const boardDescription=marks=>{
+    const descriptions=[];
+    if(shopBoard())descriptions.push(`${shopBoard()} × einzelnes Sammelboard (${boardStyleName(boardStyle())})`);
+    for(const style of starterBundles(marks).values())descriptions.push(`1 × Starterpaket-Sammelboard (${boardStyleName(style)})`);
+    return descriptions.join(' · ');
+  };
   const dialog=$('montmoryCart'),backdrop=$('cartBackdrop'),pack=$('montmoryPackShortcut');
   let previousFocus=null;
   let currentMarkSaved=false;
@@ -132,8 +141,9 @@
     try{
       const marks=completed(await all());if(!marks.length&&!shopBoard())return;
       const summary=$('cartDemoSummary');summary.replaceChildren();
-      addText(summary,'strong',`${units(marks)} Trail Marks · ${shopBoard()} Sammelboard(s)`);
+      addText(summary,'strong',`${units(marks)} Trail Marks · ${boardCount(marks)} Sammelboard(s)`);
       const [low,high]=cartPrice(marks);addText(summary,'div',`Beispiel-Warenwert: ${euro(low)} – ${euro(high)}`);
+      if(boardCount(marks))addText(summary,'div',boardDescription(marks));
       addText(summary,'div','Versand noch offen · Lieferzeit beispielhaft 7–14 Werktage');
       $('cartDemoConsent').checked=false;
       showCartView('checkout');dialog.scrollTop=0;
@@ -164,7 +174,7 @@
   }
   async function render(){
     const marks=completed((await all()).sort((a,b)=>a.created-b.created)),list=$('cartItems');list.replaceChildren();
-    const count=units(marks)+shopBoard();
+    const count=units(marks)+boardCount(marks);
     $('cartCount').textContent=`(${count})`;
     const packCount=$('montmoryPackCount'),packButton=$('montmoryPackShortcut');
     if(packCount)packCount.textContent=count>99?'99+':String(count);
@@ -179,7 +189,8 @@
     if(marks.length||shopBoard()){
       const totals=$('cartTotals');totals.replaceChildren();
       addText(totals,'h4','Zusammenfassung');
-      addText(totals,'p',`${units(marks)} × Trail Mark · ${shopBoard()} × Sammelboard`);
+      addText(totals,'p',`${units(marks)} × Trail Mark · ${boardCount(marks)} × Sammelboard`);
+      if(boardCount(marks))addText(totals,'p',boardDescription(marks));
       const [low,high]=cartPrice(marks);const total=addText(totals,'p',`${euro(low)} – ${euro(high)}`);total.className='cart-total-value';
       addText(totals,'p','Unverbindliche Beispielpreise · Versand noch offen');
     }
@@ -213,7 +224,7 @@
         addText(article,'h4',mark.bundle==='starter'?'Starterpaket · Board + 3 Trail Marks':'3er-Set · 3 Trail Marks');
         const price=addText(article,'p',mark.bundle==='starter'?'99,90–129,90 € · Beispielpreis':'39,90–49,90 € · Beispielpreis');price.className='cart-item-price';
         if(mark.bundle==='starter'){
-          addText(article,'p','1 Sammelboard inklusive · '+boardStyleName(mark.boardStyle));
+          addText(article,'p','1 × Sammelboard inklusive · Motiv: '+boardStyleName(mark.boardStyle));
         }
         for(const [i,part] of group.entries()){
           const partBox=document.createElement('div');partBox.className='montmory-bundle-part';

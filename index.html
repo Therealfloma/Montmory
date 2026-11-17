@@ -27,6 +27,13 @@
 .cart-consent{font-weight:400!important}
 @media(max-width:620px){.cart-form-grid{grid-template-columns:1fr}.cart-form-city{grid-template-columns:100px minmax(0,1fr)}}
 
+/* V141 – Vorwärtsaktion vor Zurück, auch auf kleinen Displays */
+#konfigurator .wizard-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+#konfigurator #wizardNext{order:1}
+#konfigurator #wizardBack{order:2}
+#konfigurator #wizardStatus{order:3}
+@media(max-width:620px){#konfigurator .wizard-actions{flex-direction:column;align-items:stretch}#konfigurator .wizard-actions button{width:100%}}
+
 /* V133 – Auswahl zwischen zwei MONTMORY Sammelboards */
 .montmory-board-choices{border:0;padding:0;margin:16px 0 8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
 .montmory-board-choices legend{font-size:.83rem;font-weight:650;color:#294c3b;padding:0 0 9px}
@@ -450,7 +457,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
             <div id="svgExportStatus" class="send-status">Bitte zuerst eine GPX-Datei hochladen.</div>
           </div>
         </section>
-        <div class="wizard-actions"><button id="wizardBack" type="button" class="review-cancel">Zurück</button><button id="wizardNext" type="button" class="primary-button">Weiter</button><span id="wizardStatus" role="status" aria-live="polite"></span></div>
+        <div class="wizard-actions"><button id="wizardNext" type="button" class="primary-button">Weiter</button><button id="wizardBack" type="button" class="review-cancel">Zurück</button><span id="wizardStatus" role="status" aria-live="polite"></span></div>
         <div class="hidden-values" aria-hidden="true">
           <span id="distanceValue">53,3 km</span>
           <span id="gainValue">2933 hm</span>
