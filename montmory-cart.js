@@ -35,7 +35,24 @@
   const completed=marks=>marks.filter(m=>!m.bundleId || marks.filter(x=>x.bundleId===m.bundleId).length===3);
   const bundleGroups=marks=>{const groups=new Map();for(const m of marks.filter(x=>x.bundleId)){if(!groups.has(m.bundleId))groups.set(m.bundleId,[]);groups.get(m.bundleId).push(m);}return groups;};
   const activeBundle=()=>{const p=pending();return p?.bundleId?p:null;};
-  const bundleHint=()=>{const p=activeBundle();const node=$('montmoryBundleProgress');if(!node)return;node.hidden=!p;if(p)node.textContent=`${p.kind==='starter'?'Starterpaket':'3er-Set'} · Trail Mark ${Math.min(3,(p.completed||0)+1)} von 3 gestalten. Jede Tour erhält ihre eigene GPX-Datei und Gravur.`;};
+  const bundleHint=()=>{
+    const p=activeBundle();const node=$('montmoryBundleProgress');if(!node)return;
+    node.hidden=!p;if(!p){node.replaceChildren();return;}
+    const current=Math.min(3,(p.completed||0)+1);
+    node.replaceChildren();
+    const heading=document.createElement('p');heading.className='montmory-bundle-heading';
+    heading.textContent=`${p.kind==='starter'?'Starterpaket · Board + 3 Marks':'3er-Set · 3 Marks'} — Mark ${current} von 3`;
+    node.append(heading);
+    const steps=document.createElement('div');steps.className='montmory-bundle-steps';
+    steps.setAttribute('aria-label','Fortschritt der Trail Marks');
+    for(let n=1;n<=3;n++){
+      const chip=document.createElement('span');chip.className='montmory-bundle-step'+(n<current?' is-done':n===current?' is-current':'');
+      chip.textContent=(n<current?'✓ ':'')+'Mark '+n;
+      if(n===current)chip.setAttribute('aria-current','step');
+      steps.append(chip);
+    }
+    node.append(steps);
+  };
   const qty=m=>Math.max(1,Math.min(99,Number.parseInt(m.quantity,10)||1));
   const units=marks=>marks.reduce((sum,m)=>sum+qty(m),0);
   const dialog=$('montmoryCart'),backdrop=$('cartBackdrop'),pack=$('montmoryPackShortcut');

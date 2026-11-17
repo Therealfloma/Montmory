@@ -196,6 +196,21 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
 .montmory-bundle-progress{margin:0 auto 18px;max-width:900px;padding:15px 19px;border-left:3px solid #365543;background:#f3f3ed;color:#365543;font-size:.94rem;line-height:1.55}.montmory-bundle-part{border-top:1px solid #d9ded6;padding:17px 0}.montmory-bundle-part h5{font:normal 1.15rem Georgia,serif;margin:0 0 7px}.montmory-bundle-part p{font-size:.83rem;color:#667368;margin:0 0 10px}.montmory-bundle-item>h4{font:normal 1.4rem Georgia,serif;margin:0 0 8px}
 .montmory-bundle-in-progress{padding:18px 0;border-top:1px solid #d8ded6;border-bottom:1px solid #d8ded6;margin:10px 0 22px}.montmory-bundle-in-progress h4{font:normal 1.25rem Georgia,serif;margin:0 0 8px}.montmory-bundle-in-progress p{margin:0 0 12px;color:#667368;font-size:.9rem}.montmory-bundle-in-progress button{width:100%}
 </style>
+
+<style id="montmory-v131-progress">
+/* Persistent orientation in the configurator, without floating over the site header. */
+#konfigurator .wizard-nav{position:sticky;top:0;z-index:25;background:#faf9f5;border:1px solid #e2e1d9;border-radius:5px;padding:9px 10px;margin-bottom:16px;box-shadow:0 3px 12px rgba(32,49,38,.055)}
+#konfigurator .wizard-nav button{min-width:0;transition:background-color .15s ease,color .15s ease}
+#konfigurator .wizard-nav button.active{background:#294c3b;color:#fff}
+#konfigurator .wizard-nav button.active .wizard-number{border-color:currentColor}
+#montmoryBundleProgress.montmory-bundle-progress{max-width:none;margin:0 0 12px;padding:13px 15px;border:1px solid #e1e2d8;border-left:3px solid #294c3b;border-radius:4px;background:#f6f6f0;color:#294c3b}
+.montmory-bundle-heading{font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;margin:0 0 9px}
+.montmory-bundle-steps{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.montmory-bundle-step{font-size:.85rem;padding:6px 11px;border:1px solid #d7ddd4;border-radius:3px;color:#667569;background:#fff}
+.montmory-bundle-step.is-current{color:#fff;background:#294c3b;border-color:#294c3b;font-weight:700}
+.montmory-bundle-step.is-done{color:#294c3b;border-color:#afc0b2}
+@media(max-width:640px){#konfigurator .wizard-nav{padding:7px 5px;gap:3px}#konfigurator .wizard-nav button{padding:8px 3px;font-size:.72rem;flex:1 1 0}#konfigurator .wizard-nav .wizard-number{margin-right:3px}#montmoryBundleProgress.montmory-bundle-progress{padding:11px 12px}.montmory-bundle-steps{gap:5px}.montmory-bundle-step{flex:1;text-align:center;padding:7px 4px;font-size:.77rem}}
+</style>
 </head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
