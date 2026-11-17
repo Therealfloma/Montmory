@@ -101,6 +101,42 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
 .cart-demo-success-icon{font-size:2.3rem;color:#294a3c}
 @media(max-width:600px){#montmoryCart{border-radius:16px}#montmoryCart .cart-item-images img{max-height:125px}}
 </style>
+
+<style id="montmory-v121-step3">
+.send-config-panel #sendConfiguration,.send-config-panel #sendConfigurationStatus,.send-config-panel #engravingCheck{display:none!important}
+.send-config-panel #orderReview{margin-top:16px}
+.send-config-panel #orderReview[hidden]{display:none!important}
+.send-config-panel #orderReview #addMarkToCart{margin-top:20px}
+.send-config-panel .step3-next-actions:has([hidden]){display:none}
+</style>
+<script id="montmory-v121-step3-script">
+(() => {
+  const $=id=>document.getElementById(id);
+  let wasStep3=false, timer=null;
+  function active(){
+    const nav=document.querySelector('[data-wizard-go="3"]');
+    return !!nav && (nav.classList.contains('active') || nav.getAttribute('aria-current')==='step');
+  }
+  function update(){
+    const now=active();
+    if(now&&!wasStep3){
+      clearTimeout(timer);
+      timer=setTimeout(()=>{
+        if(!active())return;
+        $('orderReview')?.setAttribute('hidden','');
+        $('sendConfiguration')?.click();
+      },180);
+    }
+    wasStep3=now;
+  }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const nav=document.querySelector('.wizard-nav');
+    if(nav)new MutationObserver(update).observe(nav,{attributes:true,subtree:true,attributeFilter:['class','aria-current']});
+    document.querySelectorAll('[data-wizard-go],#wizardNext,#wizardBack').forEach(b=>b.addEventListener('click',()=>setTimeout(update,80)));
+    update();
+  });
+})();
+</script>
 </head>
 <body>
   <button id="montmoryPackShortcut" class="montmory-pack-shortcut" type="button" aria-label="Rucksack öffnen: 0 Trail Marks gespeichert" title="Dein Trail-Mark-Rucksack">
@@ -248,43 +284,23 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
           <div class="step">3</div>
           <div class="card-content">
             <h2>Deinen Trail Mark prüfen</h2>
-            <p class="send-intro">Sieh dir deine Gestaltung, die unverbindlichen Beispielpreise und die geplante Lieferzeit an. <strong>MONTMORY befindet sich noch in der Entwicklung – Bestellungen sind derzeit nicht möglich.</strong></p>
-            <div class="customer-fields" hidden>
-              <label class="field"><span>Dein Name *</span><input id="customerName" type="text" autocomplete="name" maxlength="100" required placeholder="Vor- und Nachname"></label>
-              <label class="field"><span>Deine E-Mail-Adresse *</span><input id="customerEmail" type="email" autocomplete="email" maxlength="150" required placeholder="name@beispiel.de"></label>
-              <div class="shipping-address" aria-label="Lieferadresse">
-                <h3>Lieferadresse</h3>
-                <label class="field"><span>Straße und Hausnummer *</span><input id="shippingStreet" type="text" autocomplete="shipping street-address" maxlength="160" required placeholder="Musterstraße 12"></label>
-                <div class="shipping-address-row">
-                  <label class="field"><span>Postleitzahl *</span><input id="shippingPostal" type="text" autocomplete="shipping postal-code" maxlength="20" required placeholder="12345"></label>
-                  <label class="field"><span>Ort *</span><input id="shippingCity" type="text" autocomplete="shipping address-level2" maxlength="100" required placeholder="Musterstadt"></label>
-                </div>
-                <label class="field"><span>Land *</span><input id="shippingCountry" type="text" autocomplete="shipping country-name" maxlength="80" required value="Deutschland"></label>
-                <small>Diese Angaben werden für den Versand deines Trail Marks benötigt.</small>
-              </div>
-              <label class="field"><span>Nachricht (optional)</span><textarea id="customerNote" rows="2" maxlength="500" placeholder="Weitere Wünsche zur Bestellung"></textarea></label>
-            </div>
-            <p class="muted">Diese Übersicht ist eine unverbindliche Vorschau. Es werden keine Bestellungen angenommen und keine Zahlungen ausgelöst.</p>
-            <button id="sendConfiguration" type="button" class="primary-button">1. Gestaltung &amp; Preisvorschau prüfen <span aria-hidden="true">→</span></button>
-            <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite">Lade deine Tour hoch, um deine unverbindliche Übersicht zu sehen.</div>
-
+            <p class="send-intro">Prüfe deine Tour und die Gravur auf beiden Seiten. Änderungen kannst du über „Zurück“ in Schritt 2 vornehmen.</p>
+            <button id="sendConfiguration" type="button" hidden aria-hidden="true" tabindex="-1">Vorschau erstellen</button>
+            <div id="sendConfigurationStatus" class="send-status" role="status" aria-live="polite" hidden></div>
             <a id="openEmailDraft" href="#" hidden>E-Mail-Entwurf erneut öffnen</a>
 
             <div id="orderReview" class="order-review" hidden>
-              <h3>Dein Trail Mark auf einen Blick</h3>
+              <h3>Deine Gravur im Überblick</h3>
               <div id="customerSummary" class="customer-summary"></div>
               <div id="engravingCheck" class="engraving-check" role="status" aria-live="polite"></div>
               <div class="order-preview-grid">
                 <figure><figcaption>Vorderseite</figcaption><img id="orderPreviewFront" alt="SVG-Gravur Vorderseite"></figure>
                 <figure><figcaption>Rückseite</figcaption><img id="orderPreviewBack" alt="SVG-Gravur Rückseite"></figure>
               </div>
-              <p class="muted"><strong>Keine Bestellung:</strong> Diese Ansicht dient ausschließlich zur Planung. Ein Kaufabschluss ist derzeit nicht möglich.</p>
-              <button type="button" id="addMarkToCart" class="primary-button">2. Trail Mark im Rucksack speichern</button>
-              <button type="button" id="cancelOrderReview" class="review-cancel">Gestaltung ändern</button>
+              <button type="button" id="addMarkToCart" class="primary-button">Bestellen</button>
             </div>
-            <p id="saveBeforeNewHint" class="muted" role="status">Speichere deinen aktuellen Trail Mark zuerst im Rucksack, bevor du eine neue Konfiguration startest.</p>
-            <div class="step3-next-actions"><button type="button" id="openCartFromStep3" class="review-cancel">🎒 Rucksack &amp; Preisübersicht öffnen</button><button type="button" id="newMarkFromStep3" class="review-cancel" hidden>+ Weiteren Trail Mark gestalten</button></div>
-            <div class="whatsapp-order"><span>Du bist dir noch unsicher?</span><a id="whatsappOrder" class="whatsapp-link" href="https://wa.me/4915786644894" target="_blank" rel="noopener noreferrer">Frage zu meiner Bestellung per WhatsApp ↗</a><p class="muted whatsapp-hint">WhatsApp dient nur zur Beratung – es wird keine Bestellung versendet.</p></div>
+            <div class="step3-next-actions"><button type="button" id="newMarkFromStep3" class="review-cancel" hidden>+ Weiteren Trail Mark gestalten</button></div>
+
           </div>
         </section>
 
@@ -418,7 +434,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=119"></script>
+  <script src="./montmory-cart.js?v=121"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>

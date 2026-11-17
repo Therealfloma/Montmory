@@ -224,6 +224,7 @@
         destination:window.MontmoryDestination?.get?.()||'',front:r.front.svg,back:r.back.svg};
       await put(mark);sessionStorage.removeItem('montmory-cart-edit-id');currentMarkSaved=true;syncNewMarkButtons();await render();setStatus('Trail Mark gespeichert. Du kannst jetzt eine neue Konfiguration starten.');
       openCart();
+      $('cartDemoStart')?.click();
     }catch(e){setStatus('Speichern fehlgeschlagen: '+e.message);}
     finally{button.disabled=false;}
   });
