@@ -402,52 +402,17 @@
   }
   $('cartNewMark')?.addEventListener('click',newMark);
   $('newMarkFromStep3')?.addEventListener('click',newMark);
-  // V135: Produktauswahlen bleiben voneinander getrennt. Keine Vorauswahl.
-  const boardShopCard=document.querySelector('[data-shop-board]')?.closest('.shop-product-body');
-  const starterShopCard=document.querySelector('[data-shop-config="starter"]')?.closest('.shop-product-body');
-  const chosen={alone:null,starter:null};
-  const titleFields={};
-  function addTitleField(card,getTitle,setTitle,help,kind){
-    if(!card)return;
-    const field=document.createElement('label');field.className='montmory-board-title-field';
-    field.textContent='Deine Überschrift auf dem Board';field.hidden=true;
-    const input=document.createElement('input');input.type='text';input.maxLength=55;
-    input.placeholder='z. B. Meine Gipfelmomente';input.value=getTitle();
-    const hint=document.createElement('small');hint.textContent=help;
-    input.addEventListener('input',()=>setTitle(input.value));field.append(input,hint);
-    card.insertBefore(field,card.querySelector('.shop-bottom'));
-    titleFields[kind]=field;
-  }
-  addTitleField(boardShopCard,boardTitle,setBoardTitle,'Für dein einzelnes Sammelboard','alone');
-  addTitleField(starterShopCard,starterTitle,setStarterTitle,'Für das Board in deinem Starterpaket','starter');
-  document.querySelectorAll('[data-board-choices]').forEach(fieldset=>{
-    const kind=fieldset.querySelector('input[name="board-starter"]')?'starter':'alone';
-    const radios=[...fieldset.querySelectorAll('input[type="radio"]')];
-    radios.forEach(r=>{
-      r.checked=false;
-      r.addEventListener('change',()=>{
-        if(!r.checked)return;
-        chosen[kind]=r.value;
-        titleFields[kind].hidden=false;
-        if(kind==='starter')setStarterStyle(r.value);
-        else setBoardStyle(r.value);
-      });
-    });
-  });
-  document.querySelector('[data-shop-board]')?.addEventListener('click',()=>{
-    if(!chosen.alone){const el=$('shopStatus');if(el)el.textContent='Bitte wähle zuerst ein Sammelboard aus.';boardShopCard?.querySelector('fieldset')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
-    setBoardStyle(chosen.alone);
-    setShopBoard(shopBoard()+1);render().catch(e=>setStatus(e.message));
-    const el=$('shopStatus');if(el)el.textContent='Sammelboard im Rucksack gespeichert.';
-  });
   document.querySelectorAll('[data-shop-config]').forEach(button=>button.addEventListener('click',()=>{
     const kind=button.dataset.shopConfig;
-    if(kind==='starter'&&!chosen.starter){const el=$('shopStatus');if(el)el.textContent='Bitte wähle zuerst ein Board für das Starterpaket aus.';starterShopCard?.querySelector('fieldset')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+    if(kind==='starter'&&!starterShopCard?.querySelector('input[name="board-starter"]:checked')){
+      const el=$('shopStatus');if(el)el.textContent='Bitte wähle zuerst ein Board für dein Starterpaket aus.';
+      starterShopCard?.querySelector('[data-board-choices]')?.scrollIntoView({behavior:'smooth',block:'center'});return;
+    }
     const existingDraft=activeBundle();
     if(existingDraft && existingDraft.kind!==kind && !confirm('Du gestaltest gerade ein Paket. Wenn du ein anderes Produkt auswählst, wird die laufende Paketgestaltung unterbrochen. Fortfahren?'))return;
     if(kind==='starter'||kind==='triple'){
       const existing=activeBundle();
-      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0,boardTitle:kind==='starter'?starterTitle():null,boardStyle:kind==='starter'?chosen.starter:null});}
+      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0,boardTitle:kind==='starter'?starterTitle():null,boardStyle:kind==='starter'?starterStyle():null});}
     }else setPending(null);
     bundleHint();
     document.querySelector('[data-wizard-go="1"]')?.click();
@@ -455,6 +420,44 @@
     const label=kind==='starter'?'Starterpaket: Gestalte drei unterschiedliche Trail Marks, jeweils mit eigener GPX-Datei.':kind==='triple'?'3er-Set: Gestalte drei unterschiedliche Trail Marks.':'Gestalte deinen Trail Mark.';
     const el=$('shopStatus');if(el)el.textContent=label;
   }));
+  // Beide Produkte haben eigene, voneinander unabhängige Board-Motive und Überschriften.
+  const boardShopCard=document.querySelector('[data-shop-board]')?.closest('.shop-product-body');
+  const starterShopCard=document.querySelector('[data-shop-config="starter"]')?.closest('.shop-product-body');
+  function addTitleField(card,getTitle,setTitle,help){
+    if(!card)return;
+    const field=document.createElement('label');field.className='montmory-board-title-field';field.textContent='Deine Überschrift auf dem Board';field.hidden=true;
+    const input=document.createElement('input');input.type='text';input.maxLength=55;input.placeholder='z. B. Meine Gipfelmomente';input.value=getTitle();
+    const hint=document.createElement('small');hint.textContent=help;
+    input.addEventListener('input',()=>setTitle(input.value));field.append(input,hint);
+    card.insertBefore(field,card.querySelector('.shop-bottom'));
+  }
+  addTitleField(boardShopCard,boardTitle,setBoardTitle,'Für dein einzelnes Sammelboard');
+  addTitleField(starterShopCard,starterTitle,setStarterTitle,'Für das Board in deinem Starterpaket');
+  document.querySelectorAll('[data-board-choices]').forEach(fieldset=>{
+    const isStarter=!!fieldset.querySelector('input[name="board-starter"]');
+    const getStyle=isStarter?starterStyle:boardStyle;
+    const saveStyle=isStarter?setStarterStyle:setBoardStyle;
+    const radios=[...fieldset.querySelectorAll('input[type=radio]')];
+    radios.forEach(r=>{
+      r.checked=false;
+      r.addEventListener('change',()=>{
+        if(!r.checked)return;
+        saveStyle(r.value);
+        const card=fieldset.closest('.shop-product-body');
+        const titleField=card?.querySelector('.montmory-board-title-field');
+        if(titleField)titleField.hidden=false;
+        // Absichtlich nur die Auswahl im aktuellen Produkt aktualisieren.
+      });
+    });
+  });
+  document.querySelector('[data-shop-board]')?.addEventListener('click',()=>{
+    if(!boardShopCard?.querySelector('input[name="board-alone"]:checked')){
+      const el=$('shopStatus');if(el)el.textContent='Bitte wähle zuerst dein Sammelboard aus.';
+      boardShopCard?.querySelector('[data-board-choices]')?.scrollIntoView({behavior:'smooth',block:'center'});return;
+    }
+    setShopBoard(shopBoard()+1);render().catch(e=>setStatus(e.message));
+    const el=$('shopStatus');if(el)el.textContent='Sammelboard im Rucksack gespeichert.';
+  });
   const bundleNotice=sessionStorage.getItem('montmory-bundle-notice');if(bundleNotice){sessionStorage.removeItem('montmory-bundle-notice');setStatus(bundleNotice);}
   bundleHint();render().catch(e=>setStatus('Warenkorb konnte nicht geladen werden: '+e.message));
 })();

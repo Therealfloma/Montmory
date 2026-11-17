@@ -36,6 +36,7 @@
 .montmory-board-choice:has(input:checked) img{border-color:#294c3b;outline:1px solid #294c3b}
 .montmory-board-choice span{font-weight:550}
 @media(max-width:450px){.montmory-board-choice img{height:120px}}
+.montmory-board-title-field[hidden]{display:none!important}
 </style>
 <style>.customer-fields[hidden]{display:none!important}</style><style>
 .montmory-cart{margin:24px 0;padding:22px;border:1px solid #d8d7cd;border-radius:16px;background:#fbfaf6}
@@ -236,13 +237,14 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
 @media(max-width:640px){#konfigurator .montmory-progress-sticky{top:0}#montmoryBundleProgress .montmory-bundle-heading{font-size:.75rem}}
 </style>
 <style>
-/* V135 – Rückkehr zur großflächigen Bilddarstellung der Produktkarten. */
+/* V134: vollständige Produktansichten ohne Anschnitt */
+.shop-product > img {width:100%;height:310px;aspect-ratio:auto;object-fit:contain;object-position:center;background:#f1ede5;padding:12px;box-sizing:border-box}
+.montmory-board-choice img{height:220px;object-fit:contain;object-position:center;background:#f1ede5;padding:5px}
 .montmory-starter-marks{margin:15px 0 0;border-top:1px solid #e2dfd4;padding-top:14px}
 .montmory-starter-marks img{width:100%;height:180px;display:block;object-fit:contain;background:#f1ede5;border:1px solid #e2dfd4;box-sizing:border-box;padding:8px}
 .montmory-starter-marks figcaption{font-size:.8rem;color:#506354;margin-top:8px}
-@media(max-width:700px){.montmory-starter-marks img{height:155px}}
-.montmory-board-title-field[hidden]{display:none!important}
-.montmory-board-choice img{transition:border-color .15s}
+@media(max-width:700px){.shop-product > img{height:260px}.montmory-board-choice img{height:185px}.montmory-starter-marks img{height:155px}}
+@media(max-width:420px){.montmory-board-choice img{height:160px}}
 </style>
 </head>
 <body>
