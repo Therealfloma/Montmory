@@ -222,9 +222,8 @@
         title:$('titleInput')?.value?.trim()||'Meine Tour',km:$('previewDistance')?.textContent,
         hm:$('previewGain')?.textContent,date:$('previewDate')?.textContent,
         destination:window.MontmoryDestination?.get?.()||'',front:r.front.svg,back:r.back.svg};
-      await put(mark);sessionStorage.removeItem('montmory-cart-edit-id');currentMarkSaved=true;syncNewMarkButtons();await render();setStatus('Trail Mark gespeichert. Du kannst jetzt eine neue Konfiguration starten.');
+      await put(mark);sessionStorage.removeItem('montmory-cart-edit-id');currentMarkSaved=true;syncNewMarkButtons();await render();setStatus('Trail Mark zum Warenkorb hinzugefügt. Du kannst weitere Trail Marks gestalten oder später im Rucksack den Demo-Abschluss starten.');
       openCart();
-      $('cartDemoStart')?.click();
     }catch(e){setStatus('Speichern fehlgeschlagen: '+e.message);}
     finally{button.disabled=false;}
   });
