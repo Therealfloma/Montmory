@@ -561,7 +561,7 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   <script src="./lightburn-export.js?v=105"></script>
   <script src="./zip-order.js?v=106"></script>
   <script src="./order-review.js?v=110"></script>
-  <script src="./montmory-cart.js?v=139"></script>
+  <script src="./montmory-cart.js?v=140"></script>
   <script src="./v64-features.js?v=91"></script>
   <script src="./v66-wizard.js?v=88"></script>
   <script src="./v67-preview.js?v=69"></script>
@@ -610,22 +610,59 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
   else init();
 })();
 </script>
-<script id="montmory-v139-board-reveal">
+
+
+<style id="montmory-v140-modal-css">
+.mm-board-dialog[hidden]{display:none!important}.mm-board-dialog{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:18px;background:rgba(20,35,28,.66)}
+.mm-board-dialog-panel{width:min(760px,100%);max-height:92dvh;overflow:auto;background:#f8f7f2;padding:clamp(20px,4vw,36px);box-shadow:0 18px 65px #101a1540;position:relative;color:#203f31}
+.mm-board-dialog h2{font:normal clamp(1.55rem,4vw,2.15rem) Georgia,serif;margin:0 0 8px}.mm-board-dialog p{color:#68746b;margin:0 0 24px}.mm-board-dialog-close{position:absolute;right:16px;top:12px;border:0;background:transparent;font-size:28px;cursor:pointer;color:#203f31}
+.mm-board-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.mm-board-option{cursor:pointer;border:2px solid #deddd4;padding:9px;background:#fff;display:block}.mm-board-option:has(input:checked){border-color:#294c3b;background:#eff2ec}.mm-board-option input{accent-color:#294c3b;margin:0 0 8px}.mm-board-option img{width:100%;height:clamp(180px,37vh,320px);object-fit:contain;background:#f1ede5;display:block}.mm-board-option span{display:block;padding:10px 0 2px;font-weight:600}.mm-board-actions{display:flex;gap:12px;align-items:center;justify-content:flex-end;margin-top:22px}.mm-board-actions button{padding:13px 20px;font:inherit;cursor:pointer;border:1px solid #294c3b}.mm-board-cancel{background:transparent;color:#294c3b}.mm-board-confirm{background:#294c3b;color:#fff}.mm-board-confirm:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:560px){.mm-board-options{gap:8px}.mm-board-option{padding:5px}.mm-board-option img{height:205px}.mm-board-option span{font-size:.82rem}.mm-board-actions{flex-direction:column-reverse}.mm-board-actions button{width:100%}}
+</style>
+<div class="mm-board-dialog" id="mmBoardDialog" hidden role="dialog" aria-modal="true" aria-labelledby="mmBoardDialogTitle">
+ <div class="mm-board-dialog-panel"><button type="button" class="mm-board-dialog-close" id="mmBoardClose" aria-label="Schließen">×</button>
+ <h2 id="mmBoardDialogTitle">Sammelboard wählen</h2><p id="mmBoardDialogDesc">Wähle dein Lieblingsmotiv.</p>
+ <div class="mm-board-options" id="mmBoardOptions"></div>
+ <div class="mm-board-actions"><button type="button" class="mm-board-cancel" id="mmBoardCancel">Zurück</button><button type="button" class="mm-board-confirm" id="mmBoardConfirm" disabled>Auswahl bestätigen</button></div>
+ </div>
+</div>
+<script id="montmory-v140-board-dialog">
 (function(){
-  function init(){
-    document.querySelectorAll('[data-shop-board], [data-shop-config="starter"]').forEach(function(button){
-      button.addEventListener('click',function(event){
-        var card=button.closest('.shop-product-body');
-        var choices=card&&card.querySelector('[data-board-choices]');
-        if(!choices || !choices.hidden)return;
-        event.stopImmediatePropagation();
-        choices.hidden=false;
-        button.innerHTML=(button.hasAttribute('data-shop-board')?'In den Rucksack legen':'Drei Marks gestalten')+' <span aria-hidden="true">→</span>';
-        choices.scrollIntoView({behavior:'smooth',block:'nearest'});
-      },true);
-    });
+ function init(){
+  const dialog=document.getElementById('mmBoardDialog'),options=document.getElementById('mmBoardOptions'),confirm=document.getElementById('mmBoardConfirm');
+  const title=document.getElementById('mmBoardDialogTitle'),desc=document.getElementById('mmBoardDialogDesc');
+  let current=null,kind=null;
+  function close(){dialog.hidden=true;document.body.style.overflow='';current=null;}
+  function open(button,mode){current=button;kind=mode;options.replaceChildren();confirm.disabled=true;
+   title.textContent=mode==='starter'?'Starterpaket wählen':'Sammelboard wählen';
+   desc.textContent=mode==='starter'?'Wähle dein Board mit drei individuell gestaltbaren Trail Marks.':'Wähle eines der beiden Sammelboards.';
+   confirm.textContent=mode==='starter'?'Drei Marks gestalten →':'In den Rucksack legen →';
+   const card=button.closest('.shop-product-body'),fieldset=card.querySelector('[data-board-choices]');
+   fieldset.hidden=false; // Die bestehende Warenkorb-Logik kann die Auswahl direkt übernehmen.
+   fieldset.style.display='none';
+   const name=mode==='starter'?'board-starter':'board-alone';
+   const images=mode==='starter'?[['berge','Bergpanorama','./montmory-starter-berge.jpg'],['kompass','Kompass & Weltkarte','./montmory-starter-kompass.jpg']]:[['berge','Bergpanorama','./montmory-board-berge.jpg'],['kompass','Kompass & Weltkarte','./montmory-board-kompass.jpg']];
+   images.forEach(([value,label,src])=>{const item=document.createElement('label');item.className='mm-board-option';const radio=document.createElement('input');radio.type='radio';radio.name='mm-board-option';radio.value=value;radio.addEventListener('change',()=>{confirm.disabled=false;});const img=document.createElement('img');img.src=src;img.alt=label;const text=document.createElement('span');text.textContent=label;item.append(radio,img,text);options.append(item);});
+   dialog.hidden=false;document.body.style.overflow='hidden';document.getElementById('mmBoardClose').focus();
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  document.querySelectorAll('[data-shop-board], [data-shop-config="starter"]').forEach(button=>{
+    button.addEventListener('click',function(e){if(button.dataset.mmProceed==='yes'){delete button.dataset.mmProceed;return;}
+      e.preventDefault();e.stopImmediatePropagation();open(button,button.hasAttribute('data-shop-board')?'board':'starter');
+    },true);
+  });
+  confirm.addEventListener('click',()=>{
+   const selected=options.querySelector('input:checked');if(!selected||!current)return;
+   const button=current,mode=kind,card=button.closest('.shop-product-body');
+   const real=card.querySelector('input[name="'+(mode==='starter'?'board-starter':'board-alone')+'"]:is([value="'+selected.value+'"] )');
+   if(!real)return;
+   real.checked=true;real.dispatchEvent(new Event('change',{bubbles:true}));
+   const fieldset=card.querySelector('[data-board-choices]');fieldset.style.display='none';fieldset.hidden=false;
+   button.dataset.mmProceed='yes';close();button.click();
+  });
+  document.getElementById('mmBoardClose').addEventListener('click',close);document.getElementById('mmBoardCancel').addEventListener('click',close);
+  dialog.addEventListener('click',e=>{if(e.target===dialog)close();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!dialog.hidden)close();});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>
