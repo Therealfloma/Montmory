@@ -140,9 +140,9 @@
     if(packButton)packButton.setAttribute('aria-label',`Rucksack öffnen: ${marks.length} Trail Mark${marks.length===1?'':'s'} gespeichert`);
 
     syncNewMarkButtons();
-    $('cartEmpty').hidden=marks.length>0||shopBoard()>0;
+    $('cartEmpty').hidden=marks.length>0||shopBoard()>0||!!activeBundle();
     $('cartNewMark').hidden=marks.length===0 || !currentMarkSaved;
-    if($('cartClearAll'))$('cartClearAll').hidden=marks.length===0&&shopBoard()===0;
+    if($('cartClearAll'))$('cartClearAll').hidden=marks.length===0&&shopBoard()===0&&!activeBundle();
     $('cartTotals').hidden=marks.length===0&&shopBoard()===0;
     if($('cartDemoStart'))$('cartDemoStart').disabled=marks.length===0&&shopBoard()===0;
     if(marks.length||shopBoard()){
@@ -161,6 +161,15 @@
       for(let i=1;i<=10;i++){const o=document.createElement('option');o.value=String(i);o.textContent=i+' Stück';select.append(o);}
       select.value=String(shopBoard());select.addEventListener('change',()=>{setShopBoard(Number(select.value));render();});controls.append(select);
       const remove=document.createElement('button');remove.type='button';remove.textContent='Entfernen';remove.addEventListener('click',()=>{setShopBoard(0);render();});controls.append(remove);article.append(controls);list.append(article);
+    }
+    const inProgress=activeBundle();
+    if(inProgress){
+      const notice=document.createElement('article');notice.className='montmory-bundle-in-progress';
+      addText(notice,'h4',inProgress.kind==='starter'?'Starterpaket in Gestaltung':'3er-Set in Gestaltung');
+      addText(notice,'p',`${inProgress.completed||0} von 3 Trail Marks gespeichert · Noch nicht im Warenwert enthalten`);
+      const resume=document.createElement('button');resume.type='button';resume.className='primary-button';resume.textContent=`Trail Mark ${Math.min(3,(inProgress.completed||0)+1)} gestalten`;
+      resume.addEventListener('click',()=>{closeCart();sessionStorage.setItem('montmory-new-mark-step1','1');window.location.href=window.location.pathname+window.location.search+'#konfigurator';window.location.reload();});
+      notice.append(resume);list.prepend(notice);
     }
     const seenBundles=new Set();
     for(const mark of marks){
@@ -300,7 +309,18 @@
       sessionStorage.removeItem('montmory-cart-edit-id');currentMarkSaved=true;syncNewMarkButtons();
       if(shopChoice?.bundleId){
         const next={...shopChoice,completed:(shopChoice.completed||0)+1};
-        if(next.completed<3){setPending(next);bundleHint();setStatus(`Trail Mark ${next.completed} von 3 gespeichert. Bitte jetzt den nächsten Trail Mark gestalten.`);const b=$('newMarkFromStep3');if(b){b.hidden=false;b.disabled=false;b.textContent=`Nächsten Trail Mark gestalten (${next.completed+1}/3)`;}}
+        if(next.completed<3){
+          setPending(next);
+          bundleHint();
+          setStatus(`Trail Mark ${next.completed} von 3 gespeichert. Weiter mit Trail Mark ${next.completed+1}.`);
+          // Each package mark needs a fresh GPX and its own design. Reset to step 1
+          // only after the previous mark has been persisted in IndexedDB.
+          sessionStorage.setItem('montmory-bundle-notice',`Trail Mark ${next.completed} von 3 gespeichert. Jetzt Trail Mark ${next.completed+1} gestalten: neue GPX-Datei hochladen.`);
+          sessionStorage.setItem('montmory-new-mark-step1','1');
+          window.location.href=window.location.pathname+window.location.search+'#konfigurator';
+          window.location.reload();
+          return;
+        }
         else{setPending(null);bundleHint();setStatus('Dein Paket mit drei unterschiedlichen Trail Marks ist vollständig im Rucksack.');const b=$('newMarkFromStep3');if(b)b.textContent='Weiteren Trail Mark gestalten';}
       }else{if(shopChoice)setPending(null);setStatus('Trail Mark zum Warenkorb hinzugefügt. Du kannst weitere Trail Marks gestalten oder später im Rucksack den Demo-Abschluss starten.');}
       await render();
@@ -342,6 +362,8 @@
   $('newMarkFromStep3')?.addEventListener('click',newMark);
   document.querySelectorAll('[data-shop-config]').forEach(button=>button.addEventListener('click',()=>{
     const kind=button.dataset.shopConfig;
+    const existingDraft=activeBundle();
+    if(existingDraft && existingDraft.kind!==kind && !confirm('Du gestaltest gerade ein Paket. Wenn du ein anderes Produkt auswählst, wird die laufende Paketgestaltung unterbrochen. Fortfahren?'))return;
     if(kind==='starter'||kind==='triple'){
       const existing=activeBundle();
       if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0});}
@@ -356,5 +378,6 @@
     setShopBoard(shopBoard()+1);render().catch(e=>setStatus(e.message));
     const el=$('shopStatus');if(el)el.textContent='Sammelboard im Rucksack gespeichert.';
   });
+  const bundleNotice=sessionStorage.getItem('montmory-bundle-notice');if(bundleNotice){sessionStorage.removeItem('montmory-bundle-notice');setStatus(bundleNotice);}
   bundleHint();render().catch(e=>setStatus('Warenkorb konnte nicht geladen werden: '+e.message));
 })();
