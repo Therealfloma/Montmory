@@ -27,6 +27,10 @@
   const clearAll=()=>transaction('readwrite',s=>s.clear());
   const SHOP_KEY='montmory-shop-board-v1';
   const BOARD_TITLE_KEY='montmory-shop-board-title-v1';
+  const BOARD_STYLE_KEY='montmory-shop-board-style-v1';
+  const boardStyle=()=>localStorage.getItem(BOARD_STYLE_KEY)==='kompass'?'kompass':'berge';
+  const setBoardStyle=value=>localStorage.setItem(BOARD_STYLE_KEY,value==='kompass'?'kompass':'berge');
+  const boardStyleName=value=>value==='kompass'?'Kompass & Weltkarte':'Bergpanorama';
   const cleanBoardTitle=value=>String(value||'').trim().replace(/\s+/g,' ').slice(0,55);
   const boardTitle=()=>cleanBoardTitle(localStorage.getItem(BOARD_TITLE_KEY))||'Meine Abenteuer';
   const setBoardTitle=value=>localStorage.setItem(BOARD_TITLE_KEY,cleanBoardTitle(value)||'Meine Abenteuer');
@@ -176,6 +180,7 @@
     if(shopBoard()){
       const article=document.createElement('article');article.className='shop-cart-product';
       addText(article,'h4','MONTMORY Sammelboard');
+      addText(article,'p','Motiv: '+boardStyleName(boardStyle()));
       const titleRow=document.createElement('label');titleRow.className='montmory-board-title-inline';titleRow.textContent='Überschrift: ';
       const titleInput=document.createElement('input');titleInput.type='text';titleInput.maxLength=55;titleInput.value=boardTitle();titleInput.setAttribute('aria-label','Überschrift des Sammelboards');
       titleInput.addEventListener('change',()=>{setBoardTitle(titleInput.value);titleInput.value=boardTitle();});titleRow.append(titleInput);article.append(titleRow);
@@ -205,7 +210,7 @@
         addText(article,'h4',mark.bundle==='starter'?'Starterpaket · Board + 3 Trail Marks':'3er-Set · 3 Trail Marks');
         const price=addText(article,'p',mark.bundle==='starter'?'99,90–129,90 € · Beispielpreis':'39,90–49,90 € · Beispielpreis');price.className='cart-item-price';
         if(mark.bundle==='starter'){
-          addText(article,'p','1 Sammelboard inklusive');
+          addText(article,'p','1 Sammelboard inklusive · '+boardStyleName(mark.boardStyle));
           const titleRow=document.createElement('label');titleRow.className='montmory-board-title-inline';titleRow.textContent='Board-Überschrift: ';
           const titleInput=document.createElement('input');titleInput.type='text';titleInput.maxLength=55;titleInput.value=mark.boardTitle||'Meine Abenteuer';
           titleInput.setAttribute('aria-label','Überschrift des Boards im Starterpaket');
@@ -322,7 +327,7 @@
       const editingId=sessionStorage.getItem('montmory-cart-edit-id');
       const oldMark=editingId?await get(editingId):null;
       const shopChoice=!oldMark?pending():null;
-      const mark={boardTitle:oldMark?.boardTitle||shopChoice?.boardTitle||null,bundleId:oldMark?.bundleId||shopChoice?.bundleId||null,bundleIndex:oldMark?.bundleIndex||(shopChoice?.bundleId?(shopChoice.completed||0)+1:null),bundle:oldMark?.bundle||(shopChoice?.kind==='triple'||shopChoice?.kind==='starter'?shopChoice.kind:null),id:oldMark?.id||crypto.randomUUID?.()||String(Date.now())+'-'+Math.random(),created:oldMark?.created||Date.now(),
+      const mark={boardStyle:oldMark?.boardStyle||shopChoice?.boardStyle||null,boardTitle:oldMark?.boardTitle||shopChoice?.boardTitle||null,bundleId:oldMark?.bundleId||shopChoice?.bundleId||null,bundleIndex:oldMark?.bundleIndex||(shopChoice?.bundleId?(shopChoice.completed||0)+1:null),bundle:oldMark?.bundle||(shopChoice?.kind==='triple'||shopChoice?.kind==='starter'?shopChoice.kind:null),id:oldMark?.id||crypto.randomUUID?.()||String(Date.now())+'-'+Math.random(),created:oldMark?.created||Date.now(),
         quantity:oldMark?qty(oldMark):1,
         gpxName:gpx.name,gpxText:await gpx.text(),
         config:{
@@ -397,7 +402,7 @@
     if(existingDraft && existingDraft.kind!==kind && !confirm('Du gestaltest gerade ein Paket. Wenn du ein anderes Produkt auswählst, wird die laufende Paketgestaltung unterbrochen. Fortfahren?'))return;
     if(kind==='starter'||kind==='triple'){
       const existing=activeBundle();
-      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0,boardTitle:kind==='starter'?boardTitle():null});}
+      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0,boardTitle:kind==='starter'?boardTitle():null,boardStyle:kind==='starter'?boardStyle():null});}
     }else setPending(null);
     bundleHint();
     document.querySelector('[data-wizard-go="1"]')?.click();
@@ -414,6 +419,14 @@
     input.addEventListener('input',()=>setBoardTitle(input.value));field.append(input,hint);
     boardShopCard.insertBefore(field,boardShopCard.querySelector('.shop-bottom'));
   }
+  document.querySelectorAll('[data-board-choices]').forEach(fieldset=>{
+    const radios=[...fieldset.querySelectorAll('input[type=radio]')];
+    radios.forEach(r=>{r.checked=r.value===boardStyle();r.addEventListener('change',()=>{
+      if(!r.checked)return;
+      setBoardStyle(r.value);
+      document.querySelectorAll('[data-board-choices] input[type=radio]').forEach(other=>{other.checked=other.value===r.value;});
+    });});
+  });
   document.querySelector('[data-shop-board]')?.addEventListener('click',()=>{
     setShopBoard(shopBoard()+1);render().catch(e=>setStatus(e.message));
     const el=$('shopStatus');if(el)el.textContent='Sammelboard im Rucksack gespeichert.';
