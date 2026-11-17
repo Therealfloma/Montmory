@@ -26,6 +26,10 @@
   const get=id=>transaction('readonly',s=>s.get(id));
   const clearAll=()=>transaction('readwrite',s=>s.clear());
   const SHOP_KEY='montmory-shop-board-v1';
+  const BOARD_TITLE_KEY='montmory-shop-board-title-v1';
+  const cleanBoardTitle=value=>String(value||'').trim().replace(/\s+/g,' ').slice(0,55);
+  const boardTitle=()=>cleanBoardTitle(localStorage.getItem(BOARD_TITLE_KEY))||'Meine Abenteuer';
+  const setBoardTitle=value=>localStorage.setItem(BOARD_TITLE_KEY,cleanBoardTitle(value)||'Meine Abenteuer');
   const shopBoard=()=>Math.max(0,Math.min(10,Number(localStorage.getItem(SHOP_KEY))||0));
   const setShopBoard=n=>localStorage.setItem(SHOP_KEY,String(Math.max(0,Math.min(10,n))));
   const pendingKey='montmory-shop-pending-v1';
@@ -172,6 +176,9 @@
     if(shopBoard()){
       const article=document.createElement('article');article.className='shop-cart-product';
       addText(article,'h4','MONTMORY Sammelboard');
+      const titleRow=document.createElement('label');titleRow.className='montmory-board-title-inline';titleRow.textContent='Überschrift: ';
+      const titleInput=document.createElement('input');titleInput.type='text';titleInput.maxLength=55;titleInput.value=boardTitle();titleInput.setAttribute('aria-label','Überschrift des Sammelboards');
+      titleInput.addEventListener('change',()=>{setBoardTitle(titleInput.value);titleInput.value=boardTitle();});titleRow.append(titleInput);article.append(titleRow);
       addText(article,'p',`${shopBoard()} Stück · je 59,90–89,90 € (Beispielpreis)`);
       const controls=document.createElement('div');
       const select=document.createElement('select');select.setAttribute('aria-label','Anzahl Sammelboards');
@@ -197,7 +204,14 @@
         const article=document.createElement('article');article.className='cart-item montmory-bundle-item';
         addText(article,'h4',mark.bundle==='starter'?'Starterpaket · Board + 3 Trail Marks':'3er-Set · 3 Trail Marks');
         const price=addText(article,'p',mark.bundle==='starter'?'99,90–129,90 € · Beispielpreis':'39,90–49,90 € · Beispielpreis');price.className='cart-item-price';
-        if(mark.bundle==='starter')addText(article,'p','1 Sammelboard inklusive');
+        if(mark.bundle==='starter'){
+          addText(article,'p','1 Sammelboard inklusive');
+          const titleRow=document.createElement('label');titleRow.className='montmory-board-title-inline';titleRow.textContent='Board-Überschrift: ';
+          const titleInput=document.createElement('input');titleInput.type='text';titleInput.maxLength=55;titleInput.value=mark.boardTitle||'Meine Abenteuer';
+          titleInput.setAttribute('aria-label','Überschrift des Boards im Starterpaket');
+          titleInput.addEventListener('change',async()=>{const title=cleanBoardTitle(titleInput.value)||'Meine Abenteuer';titleInput.value=title;try{for(const part of group)await put({...part,boardTitle:title});}catch(e){setStatus('Überschrift konnte nicht gespeichert werden: '+e.message);}});
+          titleRow.append(titleInput);article.append(titleRow);
+        }
         for(const [i,part] of group.entries()){
           const partBox=document.createElement('div');partBox.className='montmory-bundle-part';
           addText(partBox,'h5',`${i+1}. ${part.title||'Trail Mark'}`);
@@ -308,7 +322,7 @@
       const editingId=sessionStorage.getItem('montmory-cart-edit-id');
       const oldMark=editingId?await get(editingId):null;
       const shopChoice=!oldMark?pending():null;
-      const mark={bundleId:oldMark?.bundleId||shopChoice?.bundleId||null,bundleIndex:oldMark?.bundleIndex||(shopChoice?.bundleId?(shopChoice.completed||0)+1:null),bundle:oldMark?.bundle||(shopChoice?.kind==='triple'||shopChoice?.kind==='starter'?shopChoice.kind:null),id:oldMark?.id||crypto.randomUUID?.()||String(Date.now())+'-'+Math.random(),created:oldMark?.created||Date.now(),
+      const mark={boardTitle:oldMark?.boardTitle||shopChoice?.boardTitle||null,bundleId:oldMark?.bundleId||shopChoice?.bundleId||null,bundleIndex:oldMark?.bundleIndex||(shopChoice?.bundleId?(shopChoice.completed||0)+1:null),bundle:oldMark?.bundle||(shopChoice?.kind==='triple'||shopChoice?.kind==='starter'?shopChoice.kind:null),id:oldMark?.id||crypto.randomUUID?.()||String(Date.now())+'-'+Math.random(),created:oldMark?.created||Date.now(),
         quantity:oldMark?qty(oldMark):1,
         gpxName:gpx.name,gpxText:await gpx.text(),
         config:{
@@ -383,7 +397,7 @@
     if(existingDraft && existingDraft.kind!==kind && !confirm('Du gestaltest gerade ein Paket. Wenn du ein anderes Produkt auswählst, wird die laufende Paketgestaltung unterbrochen. Fortfahren?'))return;
     if(kind==='starter'||kind==='triple'){
       const existing=activeBundle();
-      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0});}
+      if(existing&&existing.kind===kind){setPending(existing);}else{setPending({kind,bundleId:crypto.randomUUID?.()||'bundle-'+Date.now(),completed:0,boardTitle:kind==='starter'?boardTitle():null});}
     }else setPending(null);
     bundleHint();
     document.querySelector('[data-wizard-go="1"]')?.click();
@@ -391,6 +405,15 @@
     const label=kind==='starter'?'Starterpaket: Gestalte drei unterschiedliche Trail Marks, jeweils mit eigener GPX-Datei.':kind==='triple'?'3er-Set: Gestalte drei unterschiedliche Trail Marks.':'Gestalte deinen Trail Mark.';
     const el=$('shopStatus');if(el)el.textContent=label;
   }));
+  // Das Sammelboard und das Starterpaket teilen sich die individuell gravierte Überschrift.
+  const boardShopCard=document.querySelector('[data-shop-board]')?.closest('.shop-product-body');
+  if(boardShopCard){
+    const field=document.createElement('label');field.className='montmory-board-title-field';field.textContent='Deine Überschrift auf dem Board';
+    const input=document.createElement('input');input.type='text';input.maxLength=55;input.placeholder='z. B. Meine Gipfelmomente';input.value=boardTitle();
+    const hint=document.createElement('small');hint.textContent='Bis zu 55 Zeichen · auch für dein Starterpaket';
+    input.addEventListener('input',()=>setBoardTitle(input.value));field.append(input,hint);
+    boardShopCard.insertBefore(field,boardShopCard.querySelector('.shop-bottom'));
+  }
   document.querySelector('[data-shop-board]')?.addEventListener('click',()=>{
     setShopBoard(shopBoard()+1);render().catch(e=>setStatus(e.message));
     const el=$('shopStatus');if(el)el.textContent='Sammelboard im Rucksack gespeichert.';
