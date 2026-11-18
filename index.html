@@ -713,5 +713,58 @@ body:not(.montmory-production-mode) #lightburnTools { display: none !important; 
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+
+<!-- V143: LightBurn SVG-Downloads im Bearbeitermodus dauerhaft erreichbar. -->
+<style id="montmory-v143-editor-svg">
+body.montmory-production-mode #lightburnTools {
+  display:block !important;
+  max-width:1100px;
+  margin:24px auto;
+}
+body.montmory-production-mode #lightburnTools[hidden] { display:block !important; }
+body.montmory-production-mode #lightburnTools .step { display:none; }
+body.montmory-production-mode #lightburnTools .svg-export-buttons {
+  display:flex; flex-wrap:wrap; gap:12px;
+}
+body.montmory-production-mode #productionSvgJump {
+  display:inline-flex; margin:12px 0; text-decoration:underline; color:inherit;
+}
+</style>
+<script id="montmory-v143-editor-svg">
+(function () {
+  if (new URLSearchParams(window.location.search).get('production') !== '1') return;
+  const init = () => {
+    const tools = document.getElementById('lightburnTools');
+    const panel = document.getElementById('productionPanel');
+    if (!tools || !panel) return;
+    // Außerhalb der Wizard-Schritte platzieren, damit der Schrittwechsel
+    // die Exportwerkzeuge nicht mehr versteckt.
+    panel.insertAdjacentElement('afterend', tools);
+    tools.hidden = false;
+    tools.removeAttribute('data-wizard-step');
+    document.body.classList.add('montmory-production-mode');
+    if (!document.getElementById('productionSvgJump')) {
+      const jump = document.createElement('a');
+      jump.id = 'productionSvgJump';
+      jump.href = '#lightburnTools';
+      jump.textContent = 'SVG-Downloads für Vorder- und Rückseite öffnen';
+      panel.appendChild(jump);
+    }
+    const updateButtons = () => {
+      const ready = !!window.__trailMarkLastResult;
+      ['downloadFrontSvg','downloadBackSvg'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.disabled = !ready;
+      });
+    };
+    window.addEventListener('trailmark:gpx-ready', updateButtons);
+    window.addEventListener('montmory:import-state', updateButtons);
+    updateButtons();
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+<script src="./montmory-production-cart-export.js?v=144"></script>
 </body>
 </html>
