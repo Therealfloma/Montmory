@@ -1,4 +1,4 @@
-/* MONTMORY V144 — offline ZIP export of locally saved cart production data. */
+/* MONTMORY V146 — offline ZIP export of locally saved cart production data. */
 (()=>{'use strict';
 if(new URLSearchParams(location.search).get('production')!=='1')return;
 const panel=document.getElementById('productionPanel');if(!panel)return;
@@ -11,7 +11,34 @@ const txt=s=>enc.encode(s);
 const u16=n=>[n&255,(n>>>8)&255],u32=n=>[n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255];
 const table=Array.from({length:256},(_,n)=>{let c=n;for(let i=0;i<8;i++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);return c>>>0;});
 function crc32(data){let c=0xffffffff;for(const b of data)c=table[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0;}
-function zip(files){const local=[],central=[];let offset=0;for(const f of files){const name=txt(f.name),data=typeof f.data==='string'?txt(f.data):f.data,crc=crc32(data);const head=new Uint8Array([80,75,3,4,20,0,0,8,0,0,0,0,0,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0]);local.push(head,name,data);const ch=new Uint8Array([80,75,1,2,20,0,20,0,0,8,0,0,0,0,0,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(offset)]);central.push(ch,name);offset+=head.length+name.length+data.length;}const csize=central.reduce((n,x)=>n+x.length,0);return new Blob([...local,...central,new Uint8Array([80,75,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(csize),...u32(offset),0,0])],{type:'application/zip'});}
+function zip(files){
+  // ZIP STORE (no compression). Standard-compliant 30/46/22-byte headers.
+  const chunks=[],directory=[];let offset=0,centralSize=0;
+  const write16=(v,n,x)=>v.setUint16(n,x,true);
+  const write32=(v,n,x)=>v.setUint32(n,x>>>0,true);
+  for(const file of files){
+    const name=txt(file.name),data=typeof file.data==='string'?txt(file.data):file.data;
+    if(name.length>65535||data.length>0xffffffff)throw Error('Datei zu groß für ZIP.');
+    const crc=crc32(data);
+    const local=new Uint8Array(30),lv=new DataView(local.buffer);
+    write32(lv,0,0x04034b50);write16(lv,4,20);write16(lv,6,0x0800);
+    write16(lv,8,0);write32(lv,14,crc);write32(lv,18,data.length);
+    write32(lv,22,data.length);write16(lv,26,name.length);
+    chunks.push(local,name,data);
+    const central=new Uint8Array(46),cv=new DataView(central.buffer);
+    write32(cv,0,0x02014b50);write16(cv,4,20);write16(cv,6,20);
+    write16(cv,8,0x0800);write16(cv,10,0);write32(cv,16,crc);
+    write32(cv,20,data.length);write32(cv,24,data.length);
+    write16(cv,28,name.length);write32(cv,42,offset);
+    directory.push(central,name);centralSize+=central.length+name.length;
+    offset+=local.length+name.length+data.length;
+  }
+  if(files.length>65535||offset+centralSize>0xffffffff)throw Error('Zu viele Produktionsdaten für ZIP.');
+  const end=new Uint8Array(22),ev=new DataView(end.buffer);
+  write32(ev,0,0x06054b50);write16(ev,8,files.length);
+  write16(ev,10,files.length);write32(ev,12,centralSize);write32(ev,16,offset);
+  return new Blob([...chunks,...directory,end],{type:'application/zip'});
+}
 function loadMarks(){return new Promise((resolve,reject)=>{const r=indexedDB.open('montmory-mark-cart-v1',1);r.onerror=()=>reject(r.error);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('marks'))r.result.createObjectStore('marks',{keyPath:'id'});};r.onsuccess=()=>{const db=r.result,tx=db.transaction('marks','readonly'),q=tx.objectStore('marks').getAll();q.onsuccess=()=>resolve(q.result||[]);q.onerror=()=>reject(q.error);tx.oncomplete=()=>db.close();};});}
 const styleName=s=>s==='kompass'?'Kompass & Weltkarte':'Bergpanorama';
 button.addEventListener('click',async()=>{button.disabled=true;status.textContent='Produktionsdaten werden vorbereitet …';try{
